@@ -1,0 +1,14 @@
+experiment:
+  batch_size: 1
+  num_heads: 8
+  head_dim: 64
+  seq_len: 512
+  dtype: fp16
+  device: cuda
+  mode: prefill
+  patterns:
+    - type: topk
+      backend: masked_sdpa
+      topk: 64
+  num_warmup: 20
+  num_iters: 100
