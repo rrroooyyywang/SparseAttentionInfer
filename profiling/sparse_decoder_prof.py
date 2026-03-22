@@ -1184,12 +1184,15 @@ def evaluate_sparse_decoder_once(
     seed: int = 42,
     gpu: NvidiaGpuHeuristic | None = None,
     phase: str = "prefill",
+    device: str | None = None,
 ):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
     cfg = DecoderConfig(max_seq_len=max(seq_len, 128), sparse_mode=sparse_mode)
+    if device is not None:
+        cfg.device = device
     device = torch.device(cfg.device)
     gpu_heuristic = gpu or NvidiaGpuHeuristic()
     phase = validate_execution_phase(phase)
@@ -1238,6 +1241,9 @@ def evaluate_sparse_decoder_once(
             "top1_mismatch_rate": 1.0 - match,
             **speed_est,
         })
+        del sparse_model, sparse_logits
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     return results
 
 
@@ -1253,8 +1259,11 @@ def evaluate_sparse_decoder(
     phase: str = "prefill",
     verbose: bool = True,
     progress_bar: TerminalProgressBar | None = None,
+    device: str | None = None,
 ):
     cfg = DecoderConfig(max_seq_len=max(seq_len, 128), sparse_mode=sparse_mode)
+    if device is not None:
+        cfg.device = device
     device = torch.device(cfg.device)
     gpu_heuristic = gpu or NvidiaGpuHeuristic()
     phase = validate_execution_phase(phase)
@@ -1291,6 +1300,7 @@ def evaluate_sparse_decoder(
                 seed=trial_seed,
                 gpu=gpu_heuristic,
                 phase=phase,
+                device=cfg.device,
             )
         )
         if progress_bar is not None:
@@ -1366,6 +1376,7 @@ def collect_accuracy_curves(
     phase: str = "prefill",
     verbose: bool = True,
     progress_bar: TerminalProgressBar | None = None,
+    cpu_seq_len_threshold: int = 4096,
 ):
     rel_error_curves = init_curve_bank(sparse_modes, percentage_list)
     kl_div_curves = init_curve_bank(sparse_modes, percentage_list)
@@ -1373,6 +1384,17 @@ def collect_accuracy_curves(
     accuracy_records = []
 
     for seq_len in seq_lens:
+        if torch.cuda.is_available() and seq_len >= cpu_seq_len_threshold:
+            run_device = "cpu"
+            if verbose:
+                msg = f"[seq_len={seq_len}] Falling back to CPU to avoid GPU OOM."
+                if progress_bar is not None:
+                    progress_bar.write(msg)
+                else:
+                    print(msg)
+        else:
+            run_device = None  # use default (cuda if available)
+
         k_list = [max(1, int(seq_len * p)) for p in percentage_list]
         for sparse_mode in sparse_modes:
             results = evaluate_sparse_decoder(
@@ -1386,6 +1408,7 @@ def collect_accuracy_curves(
                 phase=phase,
                 verbose=verbose,
                 progress_bar=progress_bar,
+                device=run_device,
             )
 
             for percentage, metrics in zip(percentage_list, results):
@@ -1402,6 +1425,8 @@ def collect_accuracy_curves(
                         metrics=metrics,
                     )
                 )
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     return rel_error_curves, kl_div_curves, top1_match_curves, accuracy_records
 
