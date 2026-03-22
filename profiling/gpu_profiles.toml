@@ -1,0 +1,90 @@
+default_profile = "generic_ampere"
+
+[profiles.generic_ampere]
+description = "Generic recent NVIDIA Ampere-class proxy"
+dense_tensor_tflops = 125.0
+block_sparse_tensor_tflops = 62.0
+dynamic_sparse_tflops = 18.0
+vector_tflops = 20.0
+memory_bandwidth_gbps = 900.0
+kernel_launch_overhead_us = 3.5
+activation_bytes = 2
+weight_bytes = 2
+score_bytes = 4
+index_bytes = 4
+softmax_flops_per_element = 8.0
+topk_compare_flops_per_element = 2.0
+
+[profiles.a100_sxm80]
+description = "NVIDIA A100 SXM 80GB style proxy"
+dense_tensor_tflops = 156.0
+block_sparse_tensor_tflops = 78.0
+dynamic_sparse_tflops = 21.0
+vector_tflops = 24.0
+memory_bandwidth_gbps = 1555.0
+kernel_launch_overhead_us = 3.2
+activation_bytes = 2
+weight_bytes = 2
+score_bytes = 4
+index_bytes = 4
+softmax_flops_per_element = 8.0
+topk_compare_flops_per_element = 2.0
+
+[profiles.h100_sxm80]
+description = "NVIDIA H100 SXM 80GB style proxy"
+dense_tensor_tflops = 320.0
+block_sparse_tensor_tflops = 170.0
+dynamic_sparse_tflops = 34.0
+vector_tflops = 34.0
+memory_bandwidth_gbps = 3000.0
+kernel_launch_overhead_us = 2.8
+activation_bytes = 2
+weight_bytes = 2
+score_bytes = 4
+index_bytes = 4
+softmax_flops_per_element = 8.0
+topk_compare_flops_per_element = 2.0
+
+[profiles.rtx_4090]
+description = "NVIDIA RTX 4090 proxy using official Ada Lovelace specs plus L2-aware heuristics"
+dense_tensor_tflops = 165.2
+block_sparse_tensor_tflops = 82.0
+dynamic_sparse_tflops = 24.0
+vector_tflops = 26.4
+memory_bandwidth_gbps = 1008.0
+memory_bandwidth_efficiency = 0.88
+kernel_launch_overhead_us = 3.4
+activation_bytes = 2
+weight_bytes = 2
+score_bytes = 4
+index_bytes = 4
+softmax_flops_per_element = 8.0
+topk_compare_flops_per_element = 2.0
+sm_count = 128
+tensor_cores = 512
+boost_clock_mhz = 2520
+peak_fp32_tflops = 82.6
+peak_fp16_tensor_tflops = 165.2
+peak_fp16_tensor_sparse_tflops = 330.4
+l1_shared_kb_total = 16384
+l2_cache_kb = 73728
+register_file_kb_total = 32768
+l2_residency_fraction = 0.60
+prefill_l2_hit_rate_max = 0.10
+decode_l2_hit_rate_max = 0.70
+l2_hit_bandwidth_multiplier = 4.0
+
+[profiles.l40s]
+description = "NVIDIA L40S style proxy"
+dense_tensor_tflops = 180.0
+block_sparse_tensor_tflops = 88.0
+dynamic_sparse_tflops = 25.0
+vector_tflops = 27.0
+memory_bandwidth_gbps = 864.0
+kernel_launch_overhead_us = 3.4
+activation_bytes = 2
+weight_bytes = 2
+score_bytes = 4
+index_bytes = 4
+softmax_flops_per_element = 8.0
+topk_compare_flops_per_element = 2.0
