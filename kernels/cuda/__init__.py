@@ -22,3 +22,6 @@ File naming convention
   block_sparse_attn.cpp   ← pybind11 / torch extension binding
   block_sparse_attn.py    ← Python wrapper that calls load() and exposes the callable
 """
+from .build import SparseAttentionExtension  # noqa: F401  # type: ignore[import]  — must be first: loads .so and registers TORCH_LIBRARY ops
+
+from .src.torch_wrappers import ops

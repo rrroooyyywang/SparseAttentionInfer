@@ -20,49 +20,92 @@ This guide walks you through adding your own sparse attention algorithm to the b
 ## 1. Repo Layout
 
 ```
-sparse_attention_bench/
-├── patterns/               ← WHERE YOU ADD YOUR ALGORITHM
-│   ├── base.py             ← SparsePattern ABC + PatternMetadata
-│   ├── causal_dense.py     ← Built-in: full causal dense
-│   ├── topk_pattern.py     ← Built-in: row-wise top-k
-│   ├── bigbird_pattern.py  ← Built-in: BigBird structured sparse
-│   └── local_window.py     ← Built-in: sliding local window
+SparseAttentionInfer/
+├── sparse_attention_bench/             ← benchmark harness (pure Python)
+│   ├── patterns/                       ← WHERE YOU ADD YOUR SPARSE PATTERN
+│   │   ├── base.py                     ← SparsePattern ABC + PatternMetadata
+│   │   ├── causal_dense.py             ← Built-in: full causal dense
+│   │   ├── topk_pattern.py             ← Built-in: row-wise top-k
+│   │   ├── bigbird_pattern.py          ← Built-in: BigBird structured sparse
+│   │   └── local_window.py             ← Built-in: sliding local window
+│   │
+│   ├── attention/                      ← Compute backends (how attention is computed)
+│   │   ├── base.py                     ← AttentionBackend ABC
+│   │   ├── dense_sdpa.py               ← PyTorch scaled_dot_product_attention
+│   │   ├── masked_sdpa.py              ← SDPA with boolean mask / top-k selection
+│   │   ├── gather_sparse.py            ← Gather-based sparse (local patterns)
+│   │   ├── triton_backend.py           ← Template for Triton kernel backends
+│   │   └── __init__.py                 ← Backend registry + get_backend()
+│   │
+│   ├── runners/
+│   │   ├── benchmark_runner.py         ← Core timing engine (pattern build + attention)
+│   │   └── sweep_runner.py             ← YAML-driven multi-config sweep
+│   │
+│   ├── benchmarks/
+│   │   ├── bench_layer.py              ← Single attention layer benchmark CLI
+│   │   ├── bench_decoder.py            ← Full decoder block benchmark CLI
+│   │   ├── bench_proxy.py              ← GPU heuristic / accuracy proxy CLI
+│   │   └── bench_matmul.py             ← Sparse GEMM accuracy benchmark CLI
+│   │
+│   ├── metrics/
+│   │   ├── accuracy.py                 ← relative_error, cosine_sim, KL divergence
+│   │   ├── latency.py                  ← CUDA-event timing
+│   │   ├── memory.py                   ← Peak memory measurement
+│   │   ├── flops.py                    ← Theoretical FLOPs / arithmetic intensity
+│   │   └── sparse_matmul.py            ← Sparse GEMM metrics
+│   │
+│   ├── models/                         ← Pluggable decoder models (for bench_decoder)
+│   │   ├── attention_layer.py
+│   │   ├── decoder_block.py
+│   │   ├── kv_cache.py
+│   │   └── proxy_models.py
+│   │
+│   ├── proxy/                          ← Roofline-based GPU speedup estimator
+│   │   ├── estimator.py
+│   │   ├── evaluator.py
+│   │   ├── gpu_profiles.py
+│   │   ├── roofline.py
+│   │   └── plotting.py
+│   │
+│   ├── experiment_configs/             ← YAML experiment configs
+│   │   ├── sweep_seq_len.yaml
+│   │   ├── bigbird.yaml
+│   │   ├── topk.yaml
+│   │   ├── local_window.yaml
+│   │   └── dense.yaml
+│   │
+│   ├── outputs/                        ← Generated results (gitignored)
+│   │   ├── json/                       ← Sweep JSON results
+│   │   ├── csv/                        ← Sweep CSV results
+│   │   └── figures/                    ← Latency plots
+│   │
+│   └── config.py                       ← ExperimentConfig dataclass
 │
-├── attention/              ← Compute backends (how attention is computed)
-│   ├── base.py             ← AttentionBackend ABC
-│   ├── dense_sdpa.py       ← PyTorch scaled_dot_product_attention
-│   ├── masked_sdpa.py      ← SDPA with boolean mask / top-k selection
-│   ├── gather_sparse.py    ← Gather-based sparse (local patterns)
-│   └── __init__.py         ← Backend registry + get_backend()
+├── kernels/                            ← real Triton / CUDA sparse kernels
+│   ├── triton/                         ← @triton.jit kernel files (.py)
+│   └── cuda/                           ← CUDA extension (setup.py build)
+│       ├── setup.py                    ← builds the .so via CUDAExtension
+│       ├── __init__.py                 ← loads the .so; imports ops wrappers
+│       ├── README.md                   ← CUDA kernel development guide
+│       ├── build/                      ← compiled SparseAttentionExtension.so
+│       ├── src/csrc/
+│       │   ├── bind.cu                 ← TORCH_LIBRARY registration + PYBIND11_MODULE
+│       │   └── helloWorldKernel.cu     ← example kernel (no main())
+│       ├── src/torch_wrappers/
+│       │   └── ops.py                  ← Python-facing op wrappers + register_fake
+│       └── test/
+│           └── test_helloworld.py      ← plain Python test
 │
-├── runners/
-│   ├── benchmark_runner.py ← Core timing engine (pattern build + attention)
-│   └── sweep_runner.py     ← YAML-driven multi-config sweep
+├── profiling/                          ← standalone profiling scripts + outputs
+│   ├── sparse_prof.py
+│   ├── sparse_decoder_prof.py
+│   ├── gpu_profiles.toml
+│   └── out/                            ← profiling plots + JSON
 │
-├── benchmarks/
-│   ├── bench_layer.py      ← Single attention layer benchmark CLI
-│   ├── bench_decoder.py    ← Full decoder block benchmark CLI
-│   ├── bench_proxy.py      ← GPU heuristic / accuracy proxy CLI
-│   └── bench_matmul.py     ← Sparse GEMM accuracy benchmark CLI
-│
-├── metrics/
-│   ├── accuracy.py         ← relative_error, cosine_sim, KL divergence
-│   ├── latency.py          ← CUDA-event timing
-│   ├── memory.py           ← Peak memory measurement
-│   └── flops.py            ← Theoretical FLOPs / arithmetic intensity
-│
-├── kernels/                ← Phase 5: real Triton / CUDA sparse kernels
-│   ├── triton/             ← @triton.jit kernel files (.py)
-│   └── cuda/               ← CUDA extension files (.cu / .cpp / .py binding)
-│
-└── models/                 ← Pluggable decoder models (for bench_decoder)
-
-sparse_attention_bench/experiment_configs/  ← YAML experiment configs
-sparse_attention_bench/outputs/
-├── json/                   ← Sweep JSON results
-├── csv/                    ← Sweep CSV results
-├── figures/                ← Latency plots
-└── proxy/                  ← Proxy benchmark plots + JSON
+├── requirements.txt
+├── pyproject.toml
+├── DEVELOPER_GUIDE.md                  ← this file
+└── README.md
 ```
 
 ---
@@ -238,21 +281,11 @@ Sections 3 and 4 let you benchmark algorithms that still run through PyTorch ops
 (masked SDPA, gather/scatter). When you are ready to write a **real sparse kernel**
 that avoids computing masked-out scores entirely, use the `kernels/` folder.
 
-### Folder layout
+---
 
-```
-sparse_attention_bench/kernels/
-├── triton/          ← @triton.jit kernels (.py)
-│   └── your_kernel.py
-└── cuda/            ← CUDA extensions
-    ├── your_kernel.cu
-    ├── your_kernel.cpp   ← pybind11 binding
-    └── your_kernel.py    ← Python loader (load_inline / torch.ops)
-```
+### 5a. Triton kernel
 
-### Step 1 — Write the kernel
-
-**Triton** — put a `@triton.jit` function in `kernels/triton/your_kernel.py`.
+Put a `@triton.jit` function in `kernels/triton/your_kernel.py`.
 The Python entry point must match this signature:
 
 ```python
@@ -264,22 +297,114 @@ def triton_<name>_attn(
 ) -> torch.Tensor:     # [B, H, T_q, D]
 ```
 
-**CUDA** — write the kernel in `.cu`, expose it via pybind11 in `.cpp`, and load
-it in a `.py` wrapper using `torch.utils.cpp_extension.load()` or `load_inline()`.
+---
 
-### Step 2 — Wrap it as an AttentionBackend
+### 5b. CUDA kernel — step by step
 
-Copy `attention/triton_backend.py` (the provided template) and fill in
-`forward()` to call your kernel:
+The `kernels/cuda/` folder is a pre-built PyTorch extension. All CUDA ops share
+one compiled `.so` and one namespace (`cuda_sparse_attention`).
+See [`kernels/cuda/README.md`](kernels/cuda/README.md) for the full reference.
+
+#### Step 1 — Write the kernel — `kernels/cuda/src/csrc/<name>Kernel.cu`
+
+```cuda
+// No main(). Only __global__ kernel + a host wrapper that returns a Tensor.
+#include <torch/extension.h>
+
+__global__ void myKernel(/* args */) { ... }
+
+torch::Tensor my_op_impl(torch::Tensor q, torch::Tensor k) {
+    // launch kernel, synchronize, return output tensor
+}
+```
+
+#### Step 2 — Register in `kernels/cuda/src/csrc/bind.cu`
+
+```cpp
+#include "<name>Kernel.cu"
+
+TORCH_LIBRARY_FRAGMENT(cuda_sparse_attention, m) {
+    m.def("my_op(Tensor q, Tensor k) -> Tensor");
+}
+
+// Use CUDA when op has tensor inputs (dispatcher infers device from tensors).
+// Use CompositeExplicitAutograd when op has NO tensor inputs.
+TORCH_LIBRARY_IMPL(cuda_sparse_attention, CUDA, m) {
+    m.impl("my_op", &my_op_impl);
+}
+```
+
+> **Namespace:** always use `cuda_sparse_attention`. Never use `cuda` — PyTorch
+> already owns that namespace and a second `TORCH_LIBRARY(cuda, …)` will crash at
+> load time. Use `TORCH_LIBRARY_FRAGMENT` (not `TORCH_LIBRARY`) when adding ops
+> to the shared namespace across multiple files.
+
+#### Step 3 — Add a Python wrapper — `kernels/cuda/src/torch_wrappers/ops.py`
+
+```python
+def my_op(q: Tensor, k: Tensor) -> Tensor:
+    return torch.ops.cuda_sparse_attention.my_op.default(q, k)
+
+@torch.library.register_fake("cuda_sparse_attention::my_op")
+def _(q, k):
+    return torch.empty_like(q)   # describe output shape for torch.compile
+```
+
+#### Step 4 — Build the extension
+
+```bash
+# from kernels/cuda/
+CUDA_HOME=/usr/local/cuda-12.8 PATH=/usr/local/cuda-12.8/bin:$PATH \
+    python setup.py build_ext --inplace
+```
+
+The `.so` is placed in `kernels/cuda/build/`. Loading `kernels.cuda` anywhere
+in Python triggers `__init__.py`, which imports the `.so` and registers all ops.
+
+#### Step 5 — Write a test — `kernels/cuda/test/test_<name>.py`
+
+```python
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))  # project root
+
+import torch
+import kernels.cuda  # loads .so, registers all cuda_sparse_attention ops
+
+def test_my_op():
+    q = torch.randn(1, 4, 16, 64, device="cuda", dtype=torch.float16)
+    k = torch.randn(1, 4, 16, 64, device="cuda", dtype=torch.float16)
+    out = torch.ops.cuda_sparse_attention.my_op(q, k)
+    assert out.shape == q.shape
+
+if __name__ == "__main__":
+    test_my_op()
+    print("PASSED")
+```
+
+```bash
+python kernels/cuda/test/test_<name>.py
+```
+
+---
+
+### Step 6 — Wrap as an AttentionBackend (both Triton and CUDA)
 
 ```python
 # sparse_attention_bench/attention/my_kernel_backend.py
 from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.kernels.triton.your_kernel import triton_your_attn
+import kernels.cuda  # noqa: F401
 
 class MyKernelBackend(AttentionBackend):
     def forward(self, q, k, v, pattern):
-        return triton_your_attn(q, k, v, top_k=pattern.topk, causal=True)
+        return torch.ops.cuda_sparse_attention.my_op(q, k, v)
+```
+
+Register it in `attention/__init__.py`:
+
+```python
+from sparse_attention_bench.attention.my_kernel_backend import MyKernelBackend
+_REGISTRY["my_kernel"] = MyKernelBackend
 ```
 
 The backend receives a `PatternMetadata` object with:
@@ -291,16 +416,7 @@ The backend receives a `PatternMetadata` object with:
 | `topk` | `int` | `kind="topk"` |
 | `keep_ratio` | `float` | always — useful for reporting |
 
-### Step 3 — Register and benchmark
-
-Add one line to `attention/__init__.py`:
-
-```python
-from sparse_attention_bench.attention.my_kernel_backend import MyKernelBackend
-_REGISTRY["my_kernel"] = MyKernelBackend
-```
-
-Then use it in a sweep YAML exactly like any other backend:
+Then use it in a sweep YAML:
 
 ```yaml
 patterns:
@@ -316,10 +432,6 @@ The benchmark runner automatically measures and compares:
 - **Pattern build time** vs **kernel compute time** separately
 - Accuracy vs dense SDPA baseline (`rel_err`, `cosine_sim`)
 - Peak memory
-
-> **CPU fallback tip:** During development, guard the kernel import and fall back
-> to `MaskedSdpaBackend` when Triton/CUDA is unavailable. See
-> `attention/triton_backend.py` for the pattern.
 
 ---
 

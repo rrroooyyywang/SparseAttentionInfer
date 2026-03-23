@@ -3,3 +3,5 @@ __pycache__
 .DS_Store
 *_cn.md
 *.egg-info
+/kernels/cuda/build/*
+!/kernels/cuda/build/README.md
