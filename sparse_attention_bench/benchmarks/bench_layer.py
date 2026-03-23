@@ -38,7 +38,7 @@ def parse_args():
     )
     parser.add_argument(
         "--backend", type=str, default="dense_sdpa",
-        choices=["dense_sdpa", "masked_sdpa", "gather_sparse"],
+        choices=["dense_sdpa", "masked_sdpa", "gather_sparse", "triton_bigbird"],
     )
     parser.add_argument("--topk", type=int, default=None)
     parser.add_argument("--window-size", type=int, default=None)

@@ -1,9 +1,9 @@
 """GPU efficiency estimator (roofline proxy)."""
 import math
 
-from sparse_attention_bench.proxy.config import DecoderConfig, NvidiaGpuHeuristic
-from sparse_attention_bench.proxy.gpu_profiles import validate_execution_phase
-from sparse_attention_bench.proxy.roofline import (
+from sparse_attention_bench.analytical.config import DecoderConfig, NvidiaGpuHeuristic
+from sparse_attention_bench.analytical.gpu_profiles import validate_execution_phase
+from sparse_attention_bench.analytical.roofline import (
     adjust_cacheable_bytes_for_l2,
     roofline_op_time_us,
 )

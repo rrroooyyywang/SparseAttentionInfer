@@ -1,5 +1,5 @@
 """
-sparse_attention_bench.kernels
+kernels
 ==============================
 Home for custom Triton and CUDA sparse attention kernels (Phase 5).
 

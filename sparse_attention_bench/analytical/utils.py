@@ -5,7 +5,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from sparse_attention_bench.proxy.config import NvidiaGpuHeuristic
+from sparse_attention_bench.analytical.config import NvidiaGpuHeuristic
 
 
 def iso_utc_now() -> str:

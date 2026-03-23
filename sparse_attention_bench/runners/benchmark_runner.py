@@ -6,7 +6,7 @@ import torch
 from sparse_attention_bench.attention import get_backend
 from sparse_attention_bench.config import ExperimentConfig
 from sparse_attention_bench.metrics.accuracy import (
-    cosine_sim, mean_kl_divergence, relative_error, top1_match_rate,
+    cosine_sim, mean_kl_divergence, relative_error,
 )
 from sparse_attention_bench.metrics.latency import measure_latency
 from sparse_attention_bench.metrics.memory import measure_peak_memory_mb
@@ -103,8 +103,13 @@ class BenchmarkRunner:
 
         keep_ratio = pattern.keep_ratio
 
+        # Classify whether the backend is a proxy (dense masked) or a real sparse kernel
+        _PROXY_BACKENDS = {"masked_sdpa", "gather_sparse"}
+        timing_source = "proxy" if cfg.backend in _PROXY_BACKENDS else "real_cuda"
+
         return {
             "config": cfg.as_dict(),
+            "timing_source": timing_source,
             # Pattern build
             "pattern_build_time_ms_mean": pattern_latency["mean_ms"],
             "pattern_build_time_ms_p50": pattern_latency["p50_ms"],
@@ -122,6 +127,7 @@ class BenchmarkRunner:
             # Accuracy
             "rel_err": relative_error(s_f32, d_f32),
             "cosine_sim": cosine_sim(s_f32, d_f32),
+            "kl_divergence": mean_kl_divergence(d_f32, s_f32),
             "keep_ratio": keep_ratio,
             "sparsity_ratio": 1.0 - keep_ratio,
         }

@@ -22,6 +22,9 @@ class PatternMetadata:
     topk: int | None = None               # for kind="topk"
     keep_ratio: float = 1.0              # estimated fraction of attention kept
     build_time_ms: float = 0.0           # time to build this pattern (filled by runner)
+    # ── block-sparse layout for Triton kernels ─────────────────────────────────
+    block_size: int | None = None          # power-of-2 block size used by kv_block_list
+    kv_block_list: torch.Tensor | None = None  # [H, NQB, MAX_KV] int32, -1=padding
 
 
 class SparsePattern(ABC):

@@ -1,8 +1,8 @@
 """Roofline model math helpers."""
 import math
 
-from sparse_attention_bench.proxy.config import NvidiaGpuHeuristic
-from sparse_attention_bench.proxy.gpu_profiles import validate_execution_phase
+from sparse_attention_bench.analytical.config import NvidiaGpuHeuristic
+from sparse_attention_bench.analytical.gpu_profiles import validate_execution_phase
 
 
 def flops_to_us(flops: float, compute_tflops: float) -> float:

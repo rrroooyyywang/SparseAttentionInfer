@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from sparse_attention_bench.paths import PROFILING_DIR
-from sparse_attention_bench.proxy.config import NvidiaGpuHeuristic, VALID_EXECUTION_PHASES
+from sparse_attention_bench.analytical.config import NvidiaGpuHeuristic, VALID_EXECUTION_PHASES
 
 try:
     import tomllib

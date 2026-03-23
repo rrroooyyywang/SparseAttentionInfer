@@ -95,6 +95,17 @@ def estimate_bigbird_decode_keep_ratio(seq_len: int, top_k: int) -> float:
     return min(1.0, visible_tokens / seq_len)
 
 
+# ── Triton block-size helper ───────────────────────────────────────────────────
+
+def _next_pow2_min16(x: int) -> int:
+    """Smallest power of 2 that is both >= x and >= 16 (Triton tl.dot minimum)."""
+    p = max(16, x)
+    result = 1
+    while result < p:
+        result <<= 1
+    return result
+
+
 # ── Pattern class ─────────────────────────────────────────────────────────────
 
 class BigBirdPattern(SparsePattern):
@@ -104,13 +115,22 @@ class BigBirdPattern(SparsePattern):
         self.top_k = top_k
         self.n_heads = n_heads
         self._mask_cache: dict = {}
+        self._kv_cache: dict = {}
 
     def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
-        T = q.size(2)
+        T_q = q.size(2)
+        T_k = k.size(2)
         device = q.device
-        mask = self._get_mask(T, device)
-        keep_ratio = estimate_bigbird_attention_keep_ratio(T, min(self.top_k, T))
-        return PatternMetadata(kind="mask", mask=mask, keep_ratio=keep_ratio)
+        mask = self._get_mask(T_q, device)
+        keep_ratio = estimate_bigbird_attention_keep_ratio(T_k, min(self.top_k, T_k))
+        kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device)
+        return PatternMetadata(
+            kind="mask",
+            mask=mask,
+            keep_ratio=keep_ratio,
+            block_size=triton_bs,
+            kv_block_list=kv_block_list,
+        )
 
     def _get_mask(self, seq_len: int, device: torch.device) -> torch.Tensor:
         device_key = f"{device.type}:{device.index}"
@@ -144,3 +164,68 @@ class BigBirdPattern(SparsePattern):
 
         self._mask_cache[cache_key] = token_mask
         return token_mask
+
+    def _get_kv_block_list(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, int]:
+        """
+        Build the KV block schedule used by the Triton kernel.
+
+        Works for both prefill (T_q == T_k) and decode (T_q == 1, T_k = context).
+
+        Returns:
+            kv_block_list : [H, num_query_blocks, MAX_KV] int32
+                            Sorted KV block indices for each (head, query_block).
+                            Entries past the last valid slot are -1 (padding).
+            triton_bs     : int — power-of-2 block size (>= 16) used to build
+                            this schedule.  Must match the BLOCK_SIZE passed to
+                            bigbird_sparse_attn().
+        """
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, self.top_k)
+        if cache_key in self._kv_cache:
+            return self._kv_cache[cache_key]
+
+        # Use T_k to determine block layout (that is the context length)
+        orig_bs, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
+            T_k, self.top_k
+        )
+        triton_bs = _next_pow2_min16(orig_bs)
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks    = math.ceil(T_k / triton_bs)
+        # Upper bound on unique KV blocks per (head, query_block)
+        max_kv = max(1, global_blocks + sliding_blocks + random_blocks)
+
+        kv_block_list = torch.full(
+            (self.n_heads, num_query_blocks, max_kv),
+            fill_value=-1,
+            dtype=torch.int32,
+            device=device,
+        )
+
+        for h in range(self.n_heads):
+            for qb_local in range(num_query_blocks):
+                # Absolute block index used for BigBird schedule computation.
+                # Prefill: query block qb_local is at position qb_local in the sequence.
+                # Decode:  the single query token sits after all T_k KV tokens, so its
+                #          "virtual" block index is num_kv_blocks.
+                qb_abs = qb_local if T_q == T_k else num_kv_blocks
+
+                allowed: set[int] = set(range(global_blocks))
+                local_start = max(0, qb_abs - sliding_blocks + 1)
+                # Sliding window capped at num_kv_blocks (query block itself is not a KV block)
+                allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                rand_ids = select_bigbird_random_block_ids(
+                    qb_abs, h, num_kv_blocks,
+                    global_blocks, sliding_blocks, random_blocks,
+                )
+                allowed.update(rand_ids)
+                for slot, kb in enumerate(sorted(allowed)[:max_kv]):
+                    kv_block_list[h, qb_local, slot] = kb
+
+        result = (kv_block_list, triton_bs)
+        self._kv_cache[cache_key] = result
+        return result

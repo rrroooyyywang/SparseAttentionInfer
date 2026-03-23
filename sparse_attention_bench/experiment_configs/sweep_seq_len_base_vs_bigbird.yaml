@@ -1,0 +1,30 @@
+# Full comparison sweep: dense vs top-k vs local_window vs bigbird
+# across sequence lengths and prefill/decode modes.
+experiment:
+  batch_size: 10
+  num_heads: 8
+  head_dim: 256
+  seq_len: [64, 128, 512, 1024, 2048]
+  dtype: fp16
+  device: cuda
+  mode: [prefill, decode] # [prefill]
+  causal: true
+
+  patterns:
+    - type: dense
+      backend: dense_sdpa
+
+    - type: topk
+      backend: masked_sdpa       # PyTorch baseline
+      topk: [64, 128]
+
+    - type: bigbird
+      backend: masked_sdpa       # PyTorch baseline
+      topk: [64, 128]
+
+    - type: bigbird
+      backend: triton_bigbird    # Triton block-sparse kernel
+      topk: [64, 128]
+
+  num_warmup: 20
+  num_iters: 100

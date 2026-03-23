@@ -160,15 +160,18 @@ def plot_sweep_latency(results: list[dict], x_key: str = "seq_len", y_key: str =
     modes = sorted({r.get("mode", "") for r in results if r.get("mode")}) or [""]
     pattern_types = sorted({r.get("pattern_type", "") for r in results})
 
-    # For each (pattern_type, mode, x_key value): collect all y values across variants
-    # Structure: {(pattern, mode): {x_val: [y1, y2, ...]}}
+    # For each (pattern_type, backend, mode, x_key value): collect all y values across variants
+    # Structure: {(pattern, backend, mode): {x_val: [y1, y2, ...]}}
     buckets: dict[tuple, dict] = {}
     for r in results:
         if y_key not in r or x_key not in r:
             continue
-        key = (r.get("pattern_type", ""), r.get("mode", ""))
+        key = (r.get("pattern_type", ""), r.get("backend", ""), r.get("mode", ""))
         x_val = r[x_key]
         buckets.setdefault(key, {}).setdefault(x_val, []).append(r[y_key])
+
+    # Unique (pattern, backend) series, sorted for stable ordering
+    series = sorted({(r.get("pattern_type", ""), r.get("backend", "")) for r in results})
 
     # One subplot per mode
     n_modes = len(modes)
@@ -177,8 +180,8 @@ def plot_sweep_latency(results: list[dict], x_key: str = "seq_len", y_key: str =
 
     for col, mode in enumerate(modes):
         ax = axes[0][col]
-        for idx, pattern in enumerate(pattern_types):
-            per_x = buckets.get((pattern, mode))
+        for idx, (pattern, backend) in enumerate(series):
+            per_x = buckets.get((pattern, backend, mode))
             if not per_x:
                 continue
 
@@ -187,8 +190,13 @@ def plot_sweep_latency(results: list[dict], x_key: str = "seq_len", y_key: str =
             mins  = [min(per_x[x]) for x in xs]
             maxs  = [max(per_x[x]) for x in xs]
             color = colors[idx % len(colors)]
+            # Annotate whether this series used a proxy (masked dense) or a real sparse kernel
+            series_rows = [r for r in results if r.get("pattern_type") == pattern and r.get("backend") == backend]
+            source_tags = {r.get("timing_source") for r in series_rows if r.get("timing_source")}
+            source_tag = f" [{source_tags.pop()}]" if len(source_tags) == 1 else ""
+            label = f"{pattern}/{backend}{source_tag}"
 
-            ax.plot(xs, means, marker="o", label=pattern, color=color)
+            ax.plot(xs, means, marker="o", label=label, color=color)
             ax.fill_between(xs, mins, maxs, alpha=0.20, color=color)
 
         ax.set_xscale("log", base=2)

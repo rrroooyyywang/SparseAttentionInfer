@@ -172,7 +172,7 @@ def save_results(results: list[dict], output_dir: Path, tag: str = "sweep"):
 
 def plot_sweep_results(results: list[dict], out_dir: Path, tag: str) -> None:
     """Generate latency plots from sweep results and save to out_dir/figures/."""
-    from sparse_attention_bench.proxy.plotting import plot_sweep_latency
+    from sparse_attention_bench.analytical.plotting import plot_sweep_latency
     import matplotlib.pyplot as plt
 
     ok_results = [r for r in results if r.get("_status") == "ok"]
@@ -187,6 +187,11 @@ def plot_sweep_results(results: list[dict], out_dir: Path, tag: str) -> None:
         ("total_time_ms_mean", "Total Latency (ms)"),
         ("attention_time_ms_mean", "Attention Latency (ms)"),
         ("pattern_build_time_ms_mean", "Pattern Build Time (ms)"),
+        ("peak_memory_mb", "Peak Memory (MB)"),
+        ("rel_err", "Relative Error vs Dense"),
+        ("cosine_sim", "Cosine Similarity vs Dense"),
+        ("kl_divergence", "KL Divergence vs Dense"),
+        ("keep_ratio", "Keep Ratio"),
     ]
     # Flatten config dict into top-level for the plotter
     flat_results = []

@@ -15,7 +15,7 @@ from sparse_attention_bench.patterns.bigbird_pattern import (
     bigbird_layout_from_topk,
     select_bigbird_random_block_ids,
 )
-from sparse_attention_bench.proxy.config import DecoderConfig
+from sparse_attention_bench.analytical.config import DecoderConfig
 
 
 class DenseSelfAttention(nn.Module):

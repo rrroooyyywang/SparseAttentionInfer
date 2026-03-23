@@ -10,18 +10,18 @@ import argparse
 from pathlib import Path
 
 from sparse_attention_bench.paths import OUTPUTS_DIR
-from sparse_attention_bench.proxy.config import DecoderConfig
-from sparse_attention_bench.proxy.evaluator import (
+from sparse_attention_bench.analytical.config import DecoderConfig
+from sparse_attention_bench.analytical.evaluator import (
     collect_accuracy_curves,
     collect_phase_speedup_curves,
 )
-from sparse_attention_bench.proxy.gpu_profiles import (
+from sparse_attention_bench.analytical.gpu_profiles import (
     DEFAULT_GPU_PROFILE_PATH,
     load_gpu_heuristic,
     load_gpu_profile_catalog,
 )
-from sparse_attention_bench.proxy.plotting import plot_accuracy_summary, plot_phase_speedup
-from sparse_attention_bench.proxy.utils import (
+from sparse_attention_bench.analytical.plotting import plot_accuracy_summary, plot_phase_speedup
+from sparse_attention_bench.analytical.utils import (
     TerminalProgressBar,
     build_proxy_profile_payload,
     save_proxy_profile_json,
