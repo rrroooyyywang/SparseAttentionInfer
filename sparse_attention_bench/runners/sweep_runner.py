@@ -134,6 +134,7 @@ def run_sweep(configs: list[ExperimentConfig], verbose: bool = True) -> list[dic
                     f"  total={result['total_time_ms_mean']:.2f}ms "
                     f"(build={result['pattern_build_time_ms_mean']:.2f}ms "
                     f"attn={result['attention_time_ms_mean']:.2f}ms) "
+                    f"actual_backend={result['actual_backend']} "
                     f"rel_err={result['rel_err']:.4f} "
                     f"keep={result['keep_ratio']:.2%}"
                 )

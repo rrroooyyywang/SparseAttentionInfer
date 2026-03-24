@@ -30,3 +30,11 @@ class AttentionBackend(ABC):
         Returns: [B, H, T_q, D]
         """
         ...
+
+    @property
+    def actual_backend(self) -> str:
+        """
+        Name of the kernel/path that was actually executed on the last forward() call.
+        Backends that can fall back to a different implementation should override this.
+        """
+        return type(self).__name__

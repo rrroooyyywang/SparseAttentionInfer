@@ -106,10 +106,12 @@ class BenchmarkRunner:
         # Classify whether the backend is a proxy (dense masked) or a real sparse kernel
         _PROXY_BACKENDS = {"masked_sdpa", "gather_sparse"}
         timing_source = "proxy" if cfg.backend in _PROXY_BACKENDS else "real_cuda"
+        actual_backend = backend.actual_backend
 
         return {
             "config": cfg.as_dict(),
             "timing_source": timing_source,
+            "actual_backend": actual_backend,
             # Pattern build
             "pattern_build_time_ms_mean": pattern_latency["mean_ms"],
             "pattern_build_time_ms_p50": pattern_latency["p50_ms"],

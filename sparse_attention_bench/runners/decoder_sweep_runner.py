@@ -61,7 +61,7 @@ def _build_toy_decoder(
         max_seq_len=max(cfg.seq_len + 1, 4096),
         causal=cfg.causal,
     )
-    return model.to(cfg.device).eval()
+    return model.to(device=cfg.device, dtype=cfg.torch_dtype()).eval()
 
 
 # ── Single-config runner ───────────────────────────────────────────────────────
@@ -111,6 +111,9 @@ def run_one(
             dense_logits = dense_dec(input_ids)    # [B, seq_len, vocab_size]
             sparse_logits = sparse_dec(input_ids)  # [B, seq_len, vocab_size]
 
+        # Read after first forward so _last_actual_backend is populated
+        actual_backend = sparse_dec.blocks[0].attn.backend.actual_backend
+
         latency = measure_latency(
             fn=lambda: sparse_dec(input_ids),
             num_iters=cfg.num_iters,
@@ -125,6 +128,7 @@ def run_one(
         return {
             "config": cfg.as_dict(),
             "timing_source": timing_source,
+            "actual_backend": actual_backend,
             "total_time_ms_mean": latency["mean_ms"],
             "total_time_ms_p50": latency["p50_ms"],
             "total_time_ms_p95": latency["p95_ms"],
@@ -153,6 +157,9 @@ def run_one(
             dense_logits  = dense_dec(new_token,  pos_offset=pos_offset)  # [B, 1, vocab_size]
             sparse_logits = sparse_dec(new_token, pos_offset=pos_offset)  # [B, 1, vocab_size]
 
+        # Read after first forward so _last_actual_backend is populated
+        actual_backend = sparse_dec.blocks[0].attn.backend.actual_backend
+
         latency = measure_latency(
             fn=lambda: sparse_dec(new_token, pos_offset=pos_offset),
             num_iters=cfg.num_iters,
@@ -169,6 +176,7 @@ def run_one(
         return {
             "config": cfg.as_dict(),
             "timing_source": timing_source,
+            "actual_backend": actual_backend,
             "total_time_ms_mean": latency["mean_ms"],
             "total_time_ms_p50": latency["p50_ms"],
             "total_time_ms_p95": latency["p95_ms"],
@@ -209,6 +217,7 @@ def run_decoder_sweep(
         if verbose and result["_status"] == "ok":
             print(
                 f"  total={result['total_time_ms_mean']:.2f}ms  "
+                f"actual_backend={result['actual_backend']}  "
                 f"top1={result['top1_match_rate']:.2%}  "
                 f"kl={result['kl_divergence']:.4f}  "
                 f"rel_err={result['rel_err']:.4f}"

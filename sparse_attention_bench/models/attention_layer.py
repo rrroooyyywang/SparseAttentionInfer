@@ -57,9 +57,9 @@ class AttentionLayer(nn.Module):
     ) -> torch.Tensor:
         B, T, C = x.shape
 
-        q = self.q_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
-        k = self.k_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
-        v = self.v_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
+        q = self.q_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2).contiguous()
+        k = self.k_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2).contiguous()
+        v = self.v_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2).contiguous()
 
         if kv_cache is not None:
             k, v = kv_cache.append(layer_idx, k, v)

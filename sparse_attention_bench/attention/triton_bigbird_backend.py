@@ -28,6 +28,11 @@ class TritonBigBirdBackend(AttentionBackend):
         # The first forward() call for each new combo triggers a silent warm-up run
         # so that Triton JIT compilation never contaminates timed benchmark iterations.
         self._compiled_keys: set[tuple] = set()
+        self._last_actual_backend: str = "unknown"
+
+    @property
+    def actual_backend(self) -> str:
+        return self._last_actual_backend
 
     @staticmethod
     def _check_triton() -> bool:
@@ -52,7 +57,9 @@ class TritonBigBirdBackend(AttentionBackend):
             and q.dtype in (torch.float16, torch.bfloat16)
         ):
             self._ensure_compiled(q, k, v, pattern)
+            self._last_actual_backend = "triton_bigbird"
             return self._triton_forward(q, k, v, pattern)
+        self._last_actual_backend = "masked_sdpa_fallback"
         return self._fallback.forward(q, k, v, pattern)
 
     def _ensure_compiled(

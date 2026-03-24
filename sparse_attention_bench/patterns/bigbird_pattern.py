@@ -116,13 +116,14 @@ class BigBirdPattern(SparsePattern):
         self.n_heads = n_heads
         self._mask_cache: dict = {}
         self._kv_cache: dict = {}
+        self._keep_ratio_cache: dict = {}
 
     def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
         T_q = q.size(2)
         T_k = k.size(2)
         device = q.device
         mask = self._get_mask(T_q, device)
-        keep_ratio = estimate_bigbird_attention_keep_ratio(T_k, min(self.top_k, T_k))
+        keep_ratio = self._get_keep_ratio(T_k)
         kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device)
         return PatternMetadata(
             kind="mask",
@@ -131,6 +132,14 @@ class BigBirdPattern(SparsePattern):
             block_size=triton_bs,
             kv_block_list=kv_block_list,
         )
+
+    def _get_keep_ratio(self, T_k: int) -> float:
+        cache_key = (T_k, self.top_k)
+        if cache_key not in self._keep_ratio_cache:
+            self._keep_ratio_cache[cache_key] = estimate_bigbird_attention_keep_ratio(
+                T_k, min(self.top_k, T_k)
+            )
+        return self._keep_ratio_cache[cache_key]
 
     def _get_mask(self, seq_len: int, device: torch.device) -> torch.Tensor:
         device_key = f"{device.type}:{device.index}"
