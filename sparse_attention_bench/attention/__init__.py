@@ -3,12 +3,14 @@ from sparse_attention_bench.attention.dense_sdpa import DenseSdpaBackend
 from sparse_attention_bench.attention.masked_sdpa import MaskedSdpaBackend
 from sparse_attention_bench.attention.gather_sparse import GatherSparseBackend
 from sparse_attention_bench.attention.triton_bigbird_backend import TritonBigBirdBackend
+from sparse_attention_bench.attention.triton_universal_backend import TritonUniversalBackend
 
 _REGISTRY: dict[str, type[AttentionBackend]] = {
-    "dense_sdpa":     DenseSdpaBackend,
-    "masked_sdpa":    MaskedSdpaBackend,
-    "gather_sparse":  GatherSparseBackend,
-    "triton_bigbird": TritonBigBirdBackend,
+    "dense_sdpa":       DenseSdpaBackend,
+    "masked_sdpa":      MaskedSdpaBackend,
+    "gather_sparse":    GatherSparseBackend,
+    "triton_bigbird":   TritonBigBirdBackend,
+    "triton_universal": TritonUniversalBackend,
 }
 
 
@@ -25,5 +27,6 @@ __all__ = [
     "MaskedSdpaBackend",
     "GatherSparseBackend",
     "TritonBigBirdBackend",
+    "TritonUniversalBackend",
     "get_backend",
 ]

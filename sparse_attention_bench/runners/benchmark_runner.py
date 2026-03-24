@@ -33,7 +33,7 @@ def _get_pattern(cfg: ExperimentConfig):
         return BigBird2Pattern(top_k=cfg.topk, n_heads=cfg.num_heads)
     if cfg.pattern_type == "local_window":
         assert cfg.window_size is not None, "window_size must be set for pattern_type='local_window'"
-        return LocalWindowPattern(window_size=cfg.window_size)
+        return LocalWindowPattern(window_size=cfg.window_size, block_size=cfg.block_size)
     raise ValueError(f"Unknown pattern_type: {cfg.pattern_type!r}")
 
 

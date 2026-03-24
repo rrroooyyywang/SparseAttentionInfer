@@ -116,6 +116,7 @@ class BigBirdPattern(SparsePattern):
         self._mask_cache: dict = {}
         self._kv_cache: dict = {}
         self._keep_ratio_cache: dict = {}
+        self._csr_cache: dict = {}
 
     def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
         T_q = q.size(2)
@@ -124,12 +125,15 @@ class BigBirdPattern(SparsePattern):
         mask = self._get_mask(T_q, T_k, device)
         keep_ratio = self._get_keep_ratio(T_q, T_k)
         kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device)
+        block_pairs, block_pair_offsets = self._get_block_pairs(T_q, T_k, device)
         return PatternMetadata(
             kind="mask",
             mask=mask,
             keep_ratio=keep_ratio,
             block_size=triton_bs,
             kv_block_list=kv_block_list,
+            block_pairs=block_pairs,
+            block_pair_offsets=block_pair_offsets,
         )
 
     def _get_keep_ratio(self, T_q: int, T_k: int) -> float:
@@ -180,6 +184,67 @@ class BigBirdPattern(SparsePattern):
 
         self._mask_cache[cache_key] = token_mask
         return token_mask
+
+    def _get_block_pairs(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """
+        Build CSR block-pair schedule for the universal Triton kernel.
+
+        Returns:
+            block_pairs        : [H, max_pairs] int32  — flat sorted KB indices per head
+            block_pair_offsets : [H, NQB+1]    int32  — CSR row pointers
+        """
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, self.top_k)
+        if cache_key in self._csr_cache:
+            return self._csr_cache[cache_key]
+
+        orig_bs, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
+            T_k, self.top_k
+        )
+        triton_bs = _next_pow2_min16(orig_bs)
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks    = math.ceil(T_k / triton_bs)
+        query_block_offset = max(0, T_k - T_q) // triton_bs
+
+        all_pairs: list[list[int]] = []
+        all_offsets: list[list[int]] = []
+        max_pairs = 0
+
+        for h in range(self.n_heads):
+            offsets_h = [0]
+            pairs_h: list[int] = []
+            for qb_local in range(num_query_blocks):
+                qb_abs = query_block_offset + qb_local
+                allowed: set[int] = set(range(global_blocks))
+                local_start = max(0, qb_abs - sliding_blocks + 1)
+                allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                rand_ids = select_bigbird_random_block_ids(
+                    qb_abs, h, num_kv_blocks,
+                    global_blocks, sliding_blocks, random_blocks,
+                )
+                allowed.update(rand_ids)
+                pairs_h.extend(sorted(allowed))
+                offsets_h.append(len(pairs_h))
+            all_pairs.append(pairs_h)
+            all_offsets.append(offsets_h)
+            max_pairs = max(max_pairs, len(pairs_h))
+
+        pairs_t   = torch.zeros(self.n_heads, max(1, max_pairs), dtype=torch.int32, device=device)
+        offsets_t = torch.zeros(self.n_heads, num_query_blocks + 1, dtype=torch.int32, device=device)
+        for h in range(self.n_heads):
+            n = len(all_pairs[h])
+            if n > 0:
+                pairs_t[h, :n] = torch.tensor(all_pairs[h], dtype=torch.int32, device=device)
+            offsets_t[h] = torch.tensor(all_offsets[h], dtype=torch.int32, device=device)
+
+        result = (pairs_t, offsets_t)
+        self._csr_cache[cache_key] = result
+        return result
 
     def _get_kv_block_list(
         self,
@@ -310,6 +375,64 @@ class BigBird2Pattern(BigBirdPattern):
 
         self._mask_cache[cache_key] = token_mask
         return token_mask
+
+    def _get_block_pairs(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, self.top_k)
+        if cache_key in self._csr_cache:
+            return self._csr_cache[cache_key]
+
+        orig_bs, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
+            T_k, self.top_k
+        )
+        triton_bs = _next_pow2_min16(orig_bs)
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks    = math.ceil(T_k / triton_bs)
+        last_query_block_local = num_query_blocks - 1
+        query_block_offset = max(0, T_k - T_q) // triton_bs
+
+        all_pairs: list[list[int]] = []
+        all_offsets: list[list[int]] = []
+        max_pairs = 0
+
+        for h in range(self.n_heads):
+            offsets_h = [0]
+            pairs_h: list[int] = []
+            for qb_local in range(num_query_blocks):
+                qb_abs = query_block_offset + qb_local
+                if qb_local == last_query_block_local:
+                    allowed: set[int] = set(range(num_kv_blocks))
+                else:
+                    allowed = set(range(global_blocks))
+                    local_start = max(0, qb_abs - sliding_blocks + 1)
+                    allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                    rand_ids = select_bigbird_random_block_ids(
+                        qb_abs, h, num_kv_blocks,
+                        global_blocks, sliding_blocks, random_blocks,
+                    )
+                    allowed.update(rand_ids)
+                pairs_h.extend(sorted(allowed))
+                offsets_h.append(len(pairs_h))
+            all_pairs.append(pairs_h)
+            all_offsets.append(offsets_h)
+            max_pairs = max(max_pairs, len(pairs_h))
+
+        pairs_t   = torch.zeros(self.n_heads, max(1, max_pairs), dtype=torch.int32, device=device)
+        offsets_t = torch.zeros(self.n_heads, num_query_blocks + 1, dtype=torch.int32, device=device)
+        for h in range(self.n_heads):
+            n = len(all_pairs[h])
+            if n > 0:
+                pairs_t[h, :n] = torch.tensor(all_pairs[h], dtype=torch.int32, device=device)
+            offsets_t[h] = torch.tensor(all_offsets[h], dtype=torch.int32, device=device)
+
+        result = (pairs_t, offsets_t)
+        self._csr_cache[cache_key] = result
+        return result
 
     def _get_kv_block_list(
         self,

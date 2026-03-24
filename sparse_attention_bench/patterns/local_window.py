@@ -1,7 +1,11 @@
 """Sliding local window attention pattern."""
 import torch
 
-from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
+from sparse_attention_bench.patterns.base import (
+    PatternMetadata,
+    SparsePattern,
+    build_block_pairs_from_mask,
+)
 
 
 class LocalWindowPattern(SparsePattern):
@@ -9,11 +13,16 @@ class LocalWindowPattern(SparsePattern):
     Each query attends to the W most recent positions (including itself).
     The mask is pre-built and cached, making it compatible with both
     MaskedSdpaBackend and GatherSparseBackend.
+
+    Pass block_size (power-of-2, >= 16) to also build the CSR block-pair
+    schedule required by TritonUniversalBackend.
     """
 
-    def __init__(self, window_size: int):
+    def __init__(self, window_size: int, block_size: int | None = None):
         self.window_size = window_size
+        self.block_size = block_size   # None → no block-sparse schedule built
         self._mask_cache: dict = {}
+        self._csr_cache: dict = {}
 
     def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
         T_q = q.size(2)
@@ -28,7 +37,23 @@ class LocalWindowPattern(SparsePattern):
 
         mask = self._mask_cache[cache_key]
         keep_ratio = self._estimate_keep_ratio(T_q, T_k)
-        return PatternMetadata(kind="local", mask=mask, keep_ratio=keep_ratio)
+
+        block_pairs, block_pair_offsets = None, None
+        if self.block_size is not None:
+            csr_key = (T_q, T_k, H, device_key, self.window_size, causal, self.block_size)
+            if csr_key not in self._csr_cache:
+                bp, bpo = build_block_pairs_from_mask(mask, self.block_size)
+                self._csr_cache[csr_key] = (bp, bpo)
+            block_pairs, block_pair_offsets = self._csr_cache[csr_key]
+
+        return PatternMetadata(
+            kind="local",
+            mask=mask,
+            keep_ratio=keep_ratio,
+            block_size=self.block_size,
+            block_pairs=block_pairs,
+            block_pair_offsets=block_pair_offsets,
+        )
 
     def _build_mask(
         self, T_q: int, T_k: int, H: int, device: torch.device, causal: bool
