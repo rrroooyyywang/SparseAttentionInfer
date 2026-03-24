@@ -1,7 +1,7 @@
 """Sliding local window attention pattern."""
 import torch
 
-from sparse_attention_bench.patterns.base import (
+from sparse_attentions.patterns.base import (
     PatternMetadata,
     SparsePattern,
     build_block_pairs_from_mask,

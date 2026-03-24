@@ -3,8 +3,8 @@ import math
 
 import torch
 
-from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
-from sparse_attention_bench.patterns.topk_pattern import causal_token_pairs
+from sparse_attentions.patterns.base import PatternMetadata, SparsePattern
+from sparse_attentions.patterns.topk_pattern import causal_token_pairs
 
 
 # ── Math helpers ──────────────────────────────────────────────────────────────

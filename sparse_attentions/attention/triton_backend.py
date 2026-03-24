@@ -2,13 +2,13 @@
 Template: wrapping a Triton kernel as an AttentionBackend.
 
 Copy this file, rename it, implement _call_kernel(), then register
-the class in sparse_attention_bench/attention/__init__.py.
+the class in sparse_attentions/attention/__init__.py.
 """
 import torch
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.attention.masked_sdpa import MaskedSdpaBackend
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.attention.masked_sdpa import MaskedSdpaBackend
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 class TritonTopkBackend(AttentionBackend):
@@ -43,7 +43,7 @@ class TritonTopkBackend(AttentionBackend):
             return self._fallback.forward(q, k, v, pattern)
 
         # ── Replace the lines below with your real Triton kernel call ──────────
-        # from sparse_attention_bench.kernels.triton.topk_sparse_attn import triton_topk_attn
+        # from sparse_attentions.kernels.triton.topk_sparse_attn import triton_topk_attn
         # return triton_topk_attn(q, k, v, top_k=pattern.topk, causal=True)
         raise NotImplementedError(
             "Triton kernel not implemented yet. "

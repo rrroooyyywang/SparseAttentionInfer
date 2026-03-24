@@ -16,11 +16,11 @@ kernels/
 How to plug a kernel into the benchmark harness
 ------------------------------------------------
 1. Write your kernel in kernels/triton/ or kernels/cuda/.
-2. Create an AttentionBackend wrapper in sparse_attention_bench/attention/
+2. Create an AttentionBackend wrapper in sparse_attentions/attention/
    (see attention/triton_backend.py for a template).
-3. Register it in sparse_attention_bench/attention/__init__.py:
+3. Register it in sparse_attentions/attention/__init__.py:
 
-       from sparse_attention_bench.attention.triton_backend import TritonTopkBackend
+       from sparse_attentions.attention.triton_backend import TritonTopkBackend
        _REGISTRY["triton_topk"] = TritonTopkBackend
 
 4. Use it in a sweep YAML:

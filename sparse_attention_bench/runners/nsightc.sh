@@ -1,4 +1,4 @@
-PYTHON_BIN="/home/roy/Documents/STUDY/IC/YEAR4_TERM2/ADLS/SparseAttentionInfer/.venv/bin/python"
+PYTHON_BIN="python"
 
 CUDNN_LIB=$("$PYTHON_BIN" -c "import nvidia.cudnn; print(next(iter(nvidia.cudnn.__path__)) + '/lib')")
 
@@ -15,7 +15,7 @@ TRITON_PRINT_AUTOTUNING=1 ncu \
   --target-processes all \
   --launch-count 20 \
   -o profile_report \
-  /home/roy/Documents/STUDY/IC/YEAR4_TERM2/ADLS/SparseAttentionInfer/.venv/bin/python decoder_sweep_runner.py \
+  $PYTHON_BIN decoder_sweep_runner.py \
     --config ../experiment_configs/sweep_seq_len_base_vs_bigbird.yaml \
     --tag bigbird_vs_bigbird2 \
     --plot \

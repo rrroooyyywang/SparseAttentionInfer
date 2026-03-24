@@ -4,9 +4,9 @@ import math
 import torch
 import torch.nn.functional as F
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.metrics.accuracy import causal_mask
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.patterns.base import PatternMetadata
+from sparse_attentions.utils import causal_mask
 
 
 class MaskedSdpaBackend(AttentionBackend):

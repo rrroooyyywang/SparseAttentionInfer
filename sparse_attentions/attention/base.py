@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 class AttentionBackend(ABC):

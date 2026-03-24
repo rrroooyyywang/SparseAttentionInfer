@@ -1,21 +1,22 @@
 """Dense and sparse decoder models used by the proxy profiler."""
+from __future__ import annotations
+
 import math
+from typing import TYPE_CHECKING
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from sparse_attention_bench.metrics.accuracy import causal_mask
-from sparse_attention_bench.patterns.topk_pattern import (
+from sparse_attentions.patterns.bigbird_pattern import BigBirdPattern
+from sparse_attentions.patterns.topk_pattern import (
     feature_keep_from_attention_keep,
     sparsify_last_dim_topk,
 )
-from sparse_attention_bench.patterns.bigbird_pattern import (
-    BigBirdPattern,
-    bigbird_layout_from_topk,
-    select_bigbird_random_block_ids,
-)
-from sparse_attention_bench.analytical.config import DecoderConfig
+from sparse_attentions.utils import causal_mask
+
+if TYPE_CHECKING:
+    from sparse_attention_bench.analytical.config import DecoderConfig
 
 
 class DenseSelfAttention(nn.Module):
@@ -87,7 +88,7 @@ class SparseSelfAttention(nn.Module):
             sparse_scores = torch.full_like(scores, float("-inf"))
             sparse_scores.scatter_(-1, topk_idx, topk_vals)
         else:  # bigbird
-            bigbird_mask = self._bigbird._get_mask(T, x.device)
+            bigbird_mask = self._bigbird._get_mask(T, T, x.device)
             sparse_scores = scores.masked_fill(~bigbird_mask.unsqueeze(0), float("-inf"))
 
         attn = self.dropout(F.softmax(sparse_scores, dim=-1))

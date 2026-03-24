@@ -1,0 +1,4 @@
+[submodule "external/mase"]
+	path = external/mase
+	url = https://github.com/DeepWok/mase.git
+	branch = main

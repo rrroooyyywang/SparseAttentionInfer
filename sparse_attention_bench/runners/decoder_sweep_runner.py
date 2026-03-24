@@ -25,19 +25,19 @@ from pathlib import Path
 
 import torch
 
-from sparse_attention_bench.attention import get_backend
 from sparse_attention_bench.config import ExperimentConfig
 from sparse_attention_bench.metrics.accuracy import (
     cosine_sim, mean_kl_divergence, relative_error, top1_match_rate,
 )
 from sparse_attention_bench.metrics.latency import measure_latency
 from sparse_attention_bench.metrics.memory import measure_peak_memory_mb
-from sparse_attention_bench.models.decoder_block import ToyDecoder
-from sparse_attention_bench.models.kv_cache import KVCache
 from sparse_attention_bench.paths import OUTPUTS_DIR
-from sparse_attention_bench.patterns.causal_dense import DenseCausalPattern
 from sparse_attention_bench.runners.benchmark_runner import _get_pattern
 from sparse_attention_bench.runners.sweep_runner import build_configs_from_yaml, _load_yaml
+from sparse_attentions.attention import get_backend
+from sparse_attentions.models.decoder_block import ToyDecoder
+from sparse_attentions.models.kv_cache import KVCache
+from sparse_attentions.patterns.causal_dense import DenseCausalPattern
 
 
 # ── Model helpers ──────────────────────────────────────────────────────────────
@@ -82,6 +82,7 @@ def run_one(
     Decode  : prefill KV cache with seq_len tokens, then single-token step
               → logits [B, 1, vocab_size]
     """
+    cfg.validate_supported()
     device = torch.device(cfg.device)
 
     # ── Build dense decoder (reference) ───────────────────────────────────────

@@ -1,7 +1,7 @@
 """Dense causal attention pattern (baseline)."""
 import torch
 
-from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
+from sparse_attentions.patterns.base import PatternMetadata, SparsePattern
 
 
 class DenseCausalPattern(SparsePattern):

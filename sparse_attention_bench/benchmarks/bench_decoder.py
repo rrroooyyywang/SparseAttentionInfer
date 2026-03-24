@@ -18,15 +18,15 @@ from pathlib import Path
 
 import torch
 
-from sparse_attention_bench.attention import get_backend
 from sparse_attention_bench.config import ExperimentConfig
 from sparse_attention_bench.metrics.accuracy import relative_error, cosine_sim
 from sparse_attention_bench.metrics.latency import measure_latency
 from sparse_attention_bench.metrics.memory import measure_peak_memory_mb
-from sparse_attention_bench.models.decoder_block import ToyDecoder
-from sparse_attention_bench.models.kv_cache import KVCache
-from sparse_attention_bench.patterns.base import SparsePattern
 from sparse_attention_bench.runners.benchmark_runner import _get_pattern
+from sparse_attentions.attention import get_backend
+from sparse_attentions.models.decoder_block import ToyDecoder
+from sparse_attentions.models.kv_cache import KVCache
+from sparse_attentions.patterns.base import SparsePattern
 
 
 def _build_decoder(
@@ -51,6 +51,11 @@ def _build_decoder(
     return model.to(cfg.device).eval()
 
 
+def _clone_decode_cache(base_cache: KVCache) -> KVCache:
+    """Each timed decode step should start from the same fixed prefix cache."""
+    return base_cache.clone()
+
+
 def run_decoder_bench(
     cfg: ExperimentConfig,
     num_layers: int = 2,
@@ -69,12 +74,13 @@ def run_decoder_bench(
 
     pattern = _get_pattern(cfg)
     dense_pattern_obj = __import__(
-        "sparse_attention_bench.patterns.causal_dense", fromlist=["DenseCausalPattern"]
+        "sparse_attentions.patterns.causal_dense", fromlist=["DenseCausalPattern"]
     ).DenseCausalPattern()
 
     # Build sparse and dense decoders
     sparse_dec = _build_decoder(cfg, num_layers, pattern, cfg.backend, vocab_size, d_model)
     dense_dec = _build_decoder(cfg, num_layers, dense_pattern_obj, "dense_sdpa", vocab_size, d_model)
+    dense_dec.load_state_dict(sparse_dec.state_dict())
 
     results = {"config": cfg.as_dict(), "num_layers": num_layers, "d_model": d_model, "vocab_size": vocab_size}
 
@@ -124,15 +130,18 @@ def run_decoder_bench(
             new_token = torch.randint(0, vocab_size, (cfg.batch_size, 1), device=device)
             pos_offset = kv_len
 
+            def _decode_step():
+                step_cache = _clone_decode_cache(kv_cache)
+                with torch.no_grad():
+                    return sparse_dec(new_token, kv_cache=step_cache, pos_offset=pos_offset)
+
             latency = measure_latency(
-                fn=lambda: sparse_dec(new_token, pos_offset=pos_offset),
+                fn=_decode_step,
                 num_iters=cfg.num_iters,
                 num_warmup=cfg.num_warmup,
                 device=cfg.device,
             )
-            peak_mem = measure_peak_memory_mb(
-                lambda: sparse_dec(new_token, pos_offset=pos_offset), device=cfg.device
-            )
+            peak_mem = measure_peak_memory_mb(_decode_step, device=cfg.device)
 
             results["decode"].append({
                 "kv_len": kv_len,

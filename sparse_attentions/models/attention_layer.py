@@ -12,9 +12,9 @@ import math
 import torch
 import torch.nn as nn
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.patterns.base import SparsePattern
-from sparse_attention_bench.models.kv_cache import KVCache
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.models.kv_cache import KVCache
+from sparse_attentions.patterns.base import SparsePattern
 
 
 class AttentionLayer(nn.Module):
@@ -36,6 +36,10 @@ class AttentionLayer(nn.Module):
     ):
         super().__init__()
         assert d_model % num_heads == 0
+        if not causal:
+            raise ValueError(
+                "AttentionLayer currently supports causal decoder attention only."
+            )
         self.d_model = d_model
         self.num_heads = num_heads
         self.head_dim = d_model // num_heads

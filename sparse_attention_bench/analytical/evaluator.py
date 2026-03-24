@@ -4,13 +4,13 @@ import torch
 from sparse_attention_bench.metrics.accuracy import (
     relative_error, cosine_sim, top1_match_rate, mean_kl_divergence, summarize_scalar,
 )
-from sparse_attention_bench.models.proxy_models import DenseDecoder, build_sparse_from_dense
 from sparse_attention_bench.analytical.config import DecoderConfig, NvidiaGpuHeuristic
 from sparse_attention_bench.analytical.estimator import estimate_decoder_sparse_gpu_efficiency
 from sparse_attention_bench.analytical.gpu_profiles import validate_execution_phase
 from sparse_attention_bench.analytical.utils import (
     TerminalProgressBar, build_accuracy_record, build_speedup_record,
 )
+from sparse_attentions.models.proxy_models import DenseDecoder, build_sparse_from_dense
 
 
 @torch.no_grad()

@@ -9,10 +9,10 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.models.attention_layer import AttentionLayer
-from sparse_attention_bench.models.kv_cache import KVCache
-from sparse_attention_bench.patterns.base import SparsePattern
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.models.attention_layer import AttentionLayer
+from sparse_attentions.models.kv_cache import KVCache
+from sparse_attentions.patterns.base import SparsePattern
 
 
 class RMSNorm(nn.Module):

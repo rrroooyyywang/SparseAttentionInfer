@@ -17,7 +17,7 @@ import numpy as np
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from sparse_attention_bench.patterns.bigbird_pattern import BigBirdPattern, BigBird2Pattern
+from sparse_attentions.patterns.bigbird_pattern import BigBirdPattern, BigBird2Pattern
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

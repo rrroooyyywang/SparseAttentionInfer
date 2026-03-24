@@ -16,9 +16,9 @@ import math
 import torch
 import torch.nn.functional as F
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.attention.masked_sdpa import MaskedSdpaBackend
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.attention.masked_sdpa import MaskedSdpaBackend
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 class GatherSparseBackend(AttentionBackend):

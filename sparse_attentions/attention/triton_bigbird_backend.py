@@ -13,9 +13,9 @@ in CPU sweeps, correctness checks, and mixed-dtype experiments without error.
 """
 import torch
 
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.attention.masked_sdpa import MaskedSdpaBackend
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.attention.masked_sdpa import MaskedSdpaBackend
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 class TritonBigBirdBackend(AttentionBackend):

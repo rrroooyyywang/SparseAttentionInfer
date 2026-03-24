@@ -7,15 +7,15 @@ from sparse_attention_bench.analytical.roofline import (
     adjust_cacheable_bytes_for_l2,
     roofline_op_time_us,
 )
-from sparse_attention_bench.patterns.topk_pattern import (
+from sparse_attentions.patterns.bigbird_pattern import (
+    estimate_bigbird_attention_keep_ratio,
+    estimate_bigbird_decode_keep_ratio,
+)
+from sparse_attentions.patterns.topk_pattern import (
     causal_token_pairs,
     effective_topk_attention_keep_ratio,
     decode_topk_attention_keep_ratio,
     feature_keep_from_attention_keep,
-)
-from sparse_attention_bench.patterns.bigbird_pattern import (
-    estimate_bigbird_attention_keep_ratio,
-    estimate_bigbird_decode_keep_ratio,
 )
 
 

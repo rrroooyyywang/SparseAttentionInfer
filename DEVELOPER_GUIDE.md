@@ -136,11 +136,11 @@ AttentionBackend.forward(q, k, v, pattern)  →  output tensor
 
 This is the **only file you need to write**. The rest of the harness picks it up automatically.
 
-### Step 1 — Create `sparse_attention_bench/patterns/my_pattern.py`
+### Step 1 — Create `sparse_attentions/patterns/my_pattern.py`
 
 ```python
 import torch
-from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
+from sparse_attentions.patterns.base import PatternMetadata, SparsePattern
 
 
 class MyPattern(SparsePattern):
@@ -209,7 +209,7 @@ Open [`sparse_attention_bench/runners/benchmark_runner.py`](sparse_attention_ben
 
 ```python
 # At the top of the file, add your import:
-from sparse_attention_bench.patterns.my_pattern import MyPattern
+from sparse_attentions.patterns.my_pattern import MyPattern
 
 def _get_pattern(cfg: ExperimentConfig):
     ...
@@ -239,12 +239,12 @@ python -m sparse_attention_bench.benchmarks.bench_layer \
 
 Most patterns work fine with `masked_sdpa`. Only implement a custom backend if you have a **real sparse CUDA kernel** or want a fundamentally different compute path.
 
-### Create `sparse_attention_bench/attention/my_backend.py`
+### Create `sparse_attentions/attention/my_backend.py`
 
 ```python
 import torch
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 class MyBackend(AttentionBackend):
@@ -260,10 +260,10 @@ class MyBackend(AttentionBackend):
         return output   # [B, H, T_q, D]
 ```
 
-### Register it in `sparse_attention_bench/attention/__init__.py`
+### Register it in `sparse_attentions/attention/__init__.py`
 
 ```python
-from sparse_attention_bench.attention.my_backend import MyBackend
+from sparse_attentions.attention.my_backend import MyBackend
 
 _REGISTRY: dict[str, type[AttentionBackend]] = {
     "dense_sdpa":    DenseSdpaBackend,
@@ -391,8 +391,8 @@ python kernels/cuda/test/test_<name>.py
 ### Step 6 — Wrap as an AttentionBackend (both Triton and CUDA)
 
 ```python
-# sparse_attention_bench/attention/my_kernel_backend.py
-from sparse_attention_bench.attention.base import AttentionBackend
+# sparse_attentions/attention/my_kernel_backend.py
+from sparse_attentions.attention.base import AttentionBackend
 import kernels.cuda  # noqa: F401
 
 class MyKernelBackend(AttentionBackend):
@@ -403,7 +403,7 @@ class MyKernelBackend(AttentionBackend):
 Register it in `attention/__init__.py`:
 
 ```python
-from sparse_attention_bench.attention.my_kernel_backend import MyKernelBackend
+from sparse_attentions.attention.my_kernel_backend import MyKernelBackend
 _REGISTRY["my_kernel"] = MyKernelBackend
 ```
 

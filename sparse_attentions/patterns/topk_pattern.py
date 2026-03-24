@@ -3,7 +3,7 @@ import math
 
 import torch
 
-from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
+from sparse_attentions.patterns.base import PatternMetadata, SparsePattern
 
 
 # ── Math helpers (used by proxy estimator and pattern class) ──────────────────

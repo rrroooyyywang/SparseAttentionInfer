@@ -1,9 +1,9 @@
-from sparse_attention_bench.attention.base import AttentionBackend
-from sparse_attention_bench.attention.dense_sdpa import DenseSdpaBackend
-from sparse_attention_bench.attention.masked_sdpa import MaskedSdpaBackend
-from sparse_attention_bench.attention.gather_sparse import GatherSparseBackend
-from sparse_attention_bench.attention.triton_bigbird_backend import TritonBigBirdBackend
-from sparse_attention_bench.attention.triton_universal_backend import TritonUniversalBackend
+from sparse_attentions.attention.base import AttentionBackend
+from sparse_attentions.attention.dense_sdpa import DenseSdpaBackend
+from sparse_attentions.attention.masked_sdpa import MaskedSdpaBackend
+from sparse_attentions.attention.gather_sparse import GatherSparseBackend
+from sparse_attentions.attention.triton_bigbird_backend import TritonBigBirdBackend
+from sparse_attentions.attention.triton_universal_backend import TritonUniversalBackend
 
 _REGISTRY: dict[str, type[AttentionBackend]] = {
     "dense_sdpa":       DenseSdpaBackend,

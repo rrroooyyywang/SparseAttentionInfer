@@ -32,6 +32,16 @@ class ExperimentConfig:
     num_warmup: int = 20
     num_iters: int = 100
 
+    def __post_init__(self) -> None:
+        self.validate_supported()
+
+    def validate_supported(self) -> None:
+        if not self.causal:
+            raise ValueError(
+                "This codebase currently supports causal decoder attention only; "
+                "set causal=True."
+            )
+
     def torch_dtype(self) -> torch.dtype:
         return {"fp32": torch.float32, "fp16": torch.float16, "bf16": torch.bfloat16}[self.dtype]
 

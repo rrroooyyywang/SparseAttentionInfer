@@ -15,4 +15,4 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["sparse_attention_bench*", "kernels*"]
+include = ["sparse_attention_bench*", "sparse_attentions*", "kernels*"]

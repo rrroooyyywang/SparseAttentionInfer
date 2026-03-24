@@ -3,22 +3,22 @@ from __future__ import annotations
 
 import torch
 
-from sparse_attention_bench.attention import get_backend
 from sparse_attention_bench.config import ExperimentConfig
 from sparse_attention_bench.metrics.accuracy import (
     cosine_sim, mean_kl_divergence, relative_error,
 )
 from sparse_attention_bench.metrics.latency import measure_latency
 from sparse_attention_bench.metrics.memory import measure_peak_memory_mb
-from sparse_attention_bench.patterns.base import PatternMetadata
+from sparse_attentions.attention import get_backend
+from sparse_attentions.patterns.base import PatternMetadata
 
 
 def _get_pattern(cfg: ExperimentConfig):
     """Factory: return the right SparsePattern instance for the config."""
-    from sparse_attention_bench.patterns.causal_dense import DenseCausalPattern
-    from sparse_attention_bench.patterns.topk_pattern import TopKPattern
-    from sparse_attention_bench.patterns.bigbird_pattern import BigBirdPattern, BigBird2Pattern
-    from sparse_attention_bench.patterns.local_window import LocalWindowPattern
+    from sparse_attentions.patterns.bigbird_pattern import BigBirdPattern, BigBird2Pattern
+    from sparse_attentions.patterns.causal_dense import DenseCausalPattern
+    from sparse_attentions.patterns.local_window import LocalWindowPattern
+    from sparse_attentions.patterns.topk_pattern import TopKPattern
 
     if cfg.pattern_type == "dense":
         return DenseCausalPattern()
@@ -47,6 +47,7 @@ class BenchmarkRunner:
     """
 
     def run(self, cfg: ExperimentConfig) -> dict:
+        cfg.validate_supported()
         q, k, v = cfg.make_qkv()
 
         pattern_obj = _get_pattern(cfg)
