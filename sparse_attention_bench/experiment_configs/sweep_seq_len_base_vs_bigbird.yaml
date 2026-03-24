@@ -22,12 +22,8 @@ experiment:
       backend: triton_bigbird    # Triton block-sparse kernel
       topk: [64, 128]
 
-    - type: bigbird2
-      backend: masked_sdpa       # PyTorch baseline
-      topk: [64, 128]
-
-    - type: bigbird2
-      backend: triton_bigbird    # Triton block-sparse kernel
+    - type: bigbird
+      backend: triton_universal    # Triton block-sparse kernel
       topk: [64, 128]
 
   num_warmup: 20
