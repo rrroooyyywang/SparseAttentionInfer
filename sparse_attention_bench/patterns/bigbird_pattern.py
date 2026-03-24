@@ -244,3 +244,122 @@ class BigBirdPattern(SparsePattern):
         result = (kv_block_list, triton_bs)
         self._kv_cache[cache_key] = result
         return result
+
+
+# ── BigBird2: first AND last key blocks are global ────────────────────────────
+
+class BigBird2Pattern(BigBirdPattern):
+    """BigBird where the last query block attends to all key blocks (full row).
+
+    Analogous to how token-0 is a global KEY (every query attends to it),
+    here the last query block is a global QUERY: it attends to every key
+    position within the causal limit (which for the final token is the full
+    context).  All other rows follow normal BigBird sparsity.
+    """
+
+    def _get_mask(self, T_q: int, T_k: int, device: torch.device) -> torch.Tensor:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, self.top_k)
+        if cache_key in self._mask_cache:
+            return self._mask_cache[cache_key]
+
+        block_size, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
+            T_k, self.top_k
+        )
+        num_blocks = math.ceil(T_k / block_size)
+
+        # In a decode step T_q < T_k; the "last query block" is the only query block.
+        query_offset = max(0, T_k - T_q)
+        num_query_blocks = math.ceil(T_q / block_size)
+        last_query_block_local = num_query_blocks - 1             # local index in query
+        block_mask = torch.zeros(self.n_heads, num_query_blocks, num_blocks, dtype=torch.bool, device=device)
+
+        for h in range(self.n_heads):
+            for qb_local in range(num_query_blocks):
+                qb_abs = (query_offset // block_size) + qb_local
+                if qb_local == last_query_block_local:
+                    # BigBird2: last query block attends to all key blocks
+                    block_mask[h, qb_local, :] = True
+                else:
+                    block_mask[h, qb_local, :global_blocks] = True
+                    local_start = max(0, qb_abs - sliding_blocks + 1)
+                    block_mask[h, qb_local, local_start:qb_abs + 1] = True
+                    rand_ids = select_bigbird_random_block_ids(
+                        qb_abs, h, num_blocks, global_blocks, sliding_blocks, random_blocks
+                    )
+                    if rand_ids:
+                        block_mask[h, qb_local, torch.tensor(rand_ids, device=device)] = True
+
+        q_positions = query_offset + torch.arange(T_q, device=device)
+        q2b_local = torch.arange(T_q, device=device) // block_size   # local query-block index
+        k2b = torch.arange(T_k, device=device) // block_size
+        token_mask = block_mask[:, q2b_local][:, :, k2b]
+
+        q_pos = q_positions.unsqueeze(1)
+        k_pos = torch.arange(T_k, device=device).unsqueeze(0)
+        causal_keep = k_pos <= q_pos
+        token_mask = token_mask & causal_keep.unsqueeze(0)
+
+        diag_q = torch.arange(T_q, device=device)
+        token_mask[:, diag_q, q_positions] = True
+
+        # Compute keep_ratio from actual mask
+        ratio_key = (T_q, T_k, self.top_k)
+        if ratio_key not in self._keep_ratio_cache:
+            self._keep_ratio_cache[ratio_key] = token_mask.float().mean().item()
+
+        self._mask_cache[cache_key] = token_mask
+        return token_mask
+
+    def _get_kv_block_list(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, int]:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, self.top_k)
+        if cache_key in self._kv_cache:
+            return self._kv_cache[cache_key]
+
+        orig_bs, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
+            T_k, self.top_k
+        )
+        triton_bs = _next_pow2_min16(orig_bs)
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks = math.ceil(T_k / triton_bs)
+        last_query_block_local = num_query_blocks - 1
+        # Last query block needs all KV blocks; others follow normal budget
+        max_kv = max(num_kv_blocks, global_blocks + sliding_blocks + random_blocks)
+
+        kv_block_list = torch.full(
+            (self.n_heads, num_query_blocks, max_kv),
+            fill_value=-1,
+            dtype=torch.int32,
+            device=device,
+        )
+
+        for h in range(self.n_heads):
+            for qb_local in range(num_query_blocks):
+                query_offset = max(0, T_k - T_q)
+                query_block_offset = query_offset // triton_bs
+                qb_abs = query_block_offset + qb_local
+
+                if qb_local == last_query_block_local:
+                    # BigBird2: last query block attends all KV blocks
+                    allowed: set[int] = set(range(num_kv_blocks))
+                else:
+                    allowed = set(range(global_blocks))
+                    local_start = max(0, qb_abs - sliding_blocks + 1)
+                    allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                    rand_ids = select_bigbird_random_block_ids(
+                        qb_abs, h, num_kv_blocks,
+                        global_blocks, sliding_blocks, random_blocks,
+                    )
+                    allowed.update(rand_ids)
+                for slot, kb in enumerate(sorted(allowed)[:max_kv]):
+                    kv_block_list[h, qb_local, slot] = kb
+
+        result = (kv_block_list, triton_bs)
+        self._kv_cache[cache_key] = result
+        return result
