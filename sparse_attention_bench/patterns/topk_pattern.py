@@ -3,7 +3,6 @@ import math
 
 import torch
 
-from sparse_attention_bench.metrics.accuracy import causal_mask
 from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
 
 
@@ -53,6 +52,11 @@ class TopKPattern(SparsePattern):
 
     def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
         # Pattern metadata only carries parameters; the backend handles selection.
-        T = q.size(2)
-        keep_ratio = effective_topk_attention_keep_ratio(T, min(self.top_k, T))
+        T_q = q.size(2)
+        T_k = k.size(2)
+        top_k = min(self.top_k, T_k)
+        if T_q == T_k:
+            keep_ratio = effective_topk_attention_keep_ratio(T_k, top_k)
+        else:
+            keep_ratio = decode_topk_attention_keep_ratio(T_k, top_k)
         return PatternMetadata(kind="topk", topk=self.top_k, keep_ratio=keep_ratio)

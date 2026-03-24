@@ -153,22 +153,35 @@ def run_one(
         new_token = torch.randint(0, vocab_size, (cfg.batch_size, 1), device=device)
         pos_offset = kv_len
 
-        with torch.no_grad():
-            dense_logits  = dense_dec(new_token,  pos_offset=pos_offset)  # [B, 1, vocab_size]
-            sparse_logits = sparse_dec(new_token, pos_offset=pos_offset)  # [B, 1, vocab_size]
+        def _dense_decode_once() -> torch.Tensor:
+            with torch.no_grad():
+                return dense_dec(
+                    new_token,
+                    kv_cache=dense_kv.clone(),
+                    pos_offset=pos_offset,
+                )
+
+        def _sparse_decode_once() -> torch.Tensor:
+            with torch.no_grad():
+                return sparse_dec(
+                    new_token,
+                    kv_cache=sparse_kv.clone(),
+                    pos_offset=pos_offset,
+                )
+
+        dense_logits = _dense_decode_once()   # [B, 1, vocab_size]
+        sparse_logits = _sparse_decode_once()  # [B, 1, vocab_size]
 
         # Read after first forward so _last_actual_backend is populated
         actual_backend = sparse_dec.blocks[0].attn.backend.actual_backend
 
         latency = measure_latency(
-            fn=lambda: sparse_dec(new_token, pos_offset=pos_offset),
+            fn=_sparse_decode_once,
             num_iters=cfg.num_iters,
             num_warmup=cfg.num_warmup,
             device=cfg.device,
         )
-        peak_mem = measure_peak_memory_mb(
-            lambda: sparse_dec(new_token, pos_offset=pos_offset), device=cfg.device
-        )
+        peak_mem = measure_peak_memory_mb(_sparse_decode_once, device=cfg.device)
 
         d_f32 = dense_logits.float()
         s_f32 = sparse_logits.float()

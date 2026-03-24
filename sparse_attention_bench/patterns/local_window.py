@@ -1,7 +1,6 @@
 """Sliding local window attention pattern."""
 import torch
 
-from sparse_attention_bench.metrics.accuracy import causal_mask
 from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
 
 
@@ -36,7 +35,8 @@ class LocalWindowPattern(SparsePattern):
     ) -> torch.Tensor:
         """Build [H, T_q, T_k] boolean mask where True = attend."""
         W = self.window_size
-        rows = torch.arange(T_q, device=device).unsqueeze(1)   # [T_q, 1]
+        query_offset = max(0, T_k - T_q)
+        rows = (query_offset + torch.arange(T_q, device=device)).unsqueeze(1)   # [T_q, 1]
         cols = torch.arange(T_k, device=device).unsqueeze(0)   # [1, T_k]
         # Sliding window: key must be within [row - W + 1, row]
         in_window = (cols >= rows - W + 1) & (cols <= rows)
@@ -50,5 +50,6 @@ class LocalWindowPattern(SparsePattern):
         if T_q == 0 or T_k == 0:
             return 0.0
         total = T_q * T_k
-        kept = sum(min(W, i + 1) for i in range(T_q))
+        query_offset = max(0, T_k - T_q)
+        kept = sum(min(W, query_offset + i + 1) for i in range(T_q))
         return min(1.0, kept / total)

@@ -27,6 +27,13 @@ class KVCache:
         self._k = list(k_list)
         self._v = list(v_list)
 
+    def clone(self) -> "KVCache":
+        """Deep-copy cached tensors so decode benchmarks can reuse a fixed prefix."""
+        cloned = KVCache(num_layers=self.num_layers)
+        cloned._k = [None if k is None else k.clone() for k in self._k]
+        cloned._v = [None if v is None else v.clone() for v in self._v]
+        return cloned
+
     def append(
         self,
         layer_idx: int,

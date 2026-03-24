@@ -3,7 +3,6 @@ import math
 
 import torch
 
-from sparse_attention_bench.metrics.accuracy import causal_mask
 from sparse_attention_bench.patterns.base import PatternMetadata, SparsePattern
 from sparse_attention_bench.patterns.topk_pattern import causal_token_pairs
 
@@ -122,8 +121,8 @@ class BigBirdPattern(SparsePattern):
         T_q = q.size(2)
         T_k = k.size(2)
         device = q.device
-        mask = self._get_mask(T_q, device)
-        keep_ratio = self._get_keep_ratio(T_k)
+        mask = self._get_mask(T_q, T_k, device)
+        keep_ratio = self._get_keep_ratio(T_q, T_k)
         kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device)
         return PatternMetadata(
             kind="mask",
@@ -133,24 +132,26 @@ class BigBirdPattern(SparsePattern):
             kv_block_list=kv_block_list,
         )
 
-    def _get_keep_ratio(self, T_k: int) -> float:
-        cache_key = (T_k, self.top_k)
+    def _get_keep_ratio(self, T_q: int, T_k: int) -> float:
+        cache_key = (T_q, T_k, self.top_k)
         if cache_key not in self._keep_ratio_cache:
-            self._keep_ratio_cache[cache_key] = estimate_bigbird_attention_keep_ratio(
-                T_k, min(self.top_k, T_k)
-            )
+            if T_q == T_k:
+                keep_ratio = estimate_bigbird_attention_keep_ratio(T_k, min(self.top_k, T_k))
+            else:
+                keep_ratio = estimate_bigbird_decode_keep_ratio(T_k, min(self.top_k, T_k))
+            self._keep_ratio_cache[cache_key] = keep_ratio
         return self._keep_ratio_cache[cache_key]
 
-    def _get_mask(self, seq_len: int, device: torch.device) -> torch.Tensor:
+    def _get_mask(self, T_q: int, T_k: int, device: torch.device) -> torch.Tensor:
         device_key = f"{device.type}:{device.index}"
-        cache_key = (seq_len, device_key, self.top_k)
+        cache_key = (T_q, T_k, device_key, self.top_k)
         if cache_key in self._mask_cache:
             return self._mask_cache[cache_key]
 
         block_size, global_blocks, sliding_blocks, random_blocks = bigbird_layout_from_topk(
-            seq_len, self.top_k
+            T_k, self.top_k
         )
-        num_blocks = math.ceil(seq_len / block_size)
+        num_blocks = math.ceil(T_k / block_size)
         block_mask = torch.zeros(self.n_heads, num_blocks, num_blocks, dtype=torch.bool, device=device)
 
         for h in range(self.n_heads):
@@ -164,12 +165,18 @@ class BigBirdPattern(SparsePattern):
                 if rand_ids:
                     block_mask[h, qb, torch.tensor(rand_ids, device=device)] = True
 
-        t2b = torch.arange(seq_len, device=device) // block_size
-        token_mask = block_mask[:, t2b][:, :, t2b]
-        causal_keep = ~causal_mask(seq_len, device).squeeze(0).squeeze(0)
+        query_offset = max(0, T_k - T_q)
+        q_positions = query_offset + torch.arange(T_q, device=device)
+        q2b = q_positions // block_size
+        k2b = torch.arange(T_k, device=device) // block_size
+        token_mask = block_mask[:, q2b][:, :, k2b]
+
+        q_pos = q_positions.unsqueeze(1)
+        k_pos = torch.arange(T_k, device=device).unsqueeze(0)
+        causal_keep = k_pos <= q_pos
         token_mask = token_mask & causal_keep.unsqueeze(0)
-        diag = torch.arange(seq_len, device=device)
-        token_mask[:, diag, diag] = True
+        diag_q = torch.arange(T_q, device=device)
+        token_mask[:, diag_q, q_positions] = True
 
         self._mask_cache[cache_key] = token_mask
         return token_mask
@@ -183,7 +190,8 @@ class BigBirdPattern(SparsePattern):
         """
         Build the KV block schedule used by the Triton kernel.
 
-        Works for both prefill (T_q == T_k) and decode (T_q == 1, T_k = context).
+        Works for both prefill (T_q == T_k) and decode (T_q < T_k), where the
+        queries correspond to the most recent tokens in the KV sequence.
 
         Returns:
             kv_block_list : [H, num_query_blocks, MAX_KV] int32
@@ -217,11 +225,9 @@ class BigBirdPattern(SparsePattern):
 
         for h in range(self.n_heads):
             for qb_local in range(num_query_blocks):
-                # Absolute block index used for BigBird schedule computation.
-                # Prefill: query block qb_local is at position qb_local in the sequence.
-                # Decode:  the single query token sits after all T_k KV tokens, so its
-                #          "virtual" block index is num_kv_blocks.
-                qb_abs = qb_local if T_q == T_k else num_kv_blocks
+                query_offset = max(0, T_k - T_q)
+                query_block_offset = query_offset // triton_bs
+                qb_abs = query_block_offset + qb_local
 
                 allowed: set[int] = set(range(global_blocks))
                 local_start = max(0, qb_abs - sliding_blocks + 1)
