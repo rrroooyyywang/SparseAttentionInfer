@@ -10,3 +10,24 @@ At the current stage, the framework has already produced several representative 
 
 More importantly, the framework itself has strong research and engineering potential. The repository already includes a fairly complete foundation: unified abstractions for multiple sparse patterns and backends, YAML-driven sweep benchmarking, end-to-end Toy Decoder evaluation, Triton and CUDA kernel entry points, Qwen3 sparse-attention integration, and grouped-query sparse-architecture search. New sparse-attention methods therefore do not need to build experimental infrastructure from scratch; they can be plugged directly into the existing framework and evaluated for speed, memory, accuracy, and integration cost. The framework also supports system-level telemetry and several evaluation modes that are closely aligned with real inference workloads, including WikiText-based perplexity testing, decode-stage throughput measurement, first-token latency analysis, and comparisons across latency, memory, and accuracy. For grouped-query attention in LLMs, the framework can already assign sparsity and pattern settings at the granularity of each KV group, enabling analysis of how different models, layers, and KV groups respond to sparsification. It already supports experimentation on the Qwen3 family and provides a foundation for exploring kernel parameters and sparse structure design across models of different scales.
 
+## Documentation
+
+This list intentionally includes only the English documentation currently available in the repository.
+
+- [Developer Guide](DEVELOPER_GUIDE.md)  
+  Start here if you want to extend the codebase. It explains the repository structure, the recommended development order, and the core sparse-pattern and backend abstractions.
+
+- [Profiling Guide](profiling/README.md)  
+  Use this when you want to run the toy profiling and decoder proxy profiling scripts, configure GPU proxy parameters, and interpret the generated plots and JSON outputs.
+
+- [Benchmark Runner Notes](sparse_attention_bench/runners/README.md)  
+  A short command-oriented reference for running Toy Decoder sweeps and Nsight-based benchmarking from the benchmark runner directory.
+
+- [Sparse LLM Search Guide](sparse_llm/README.md)  
+  Read this for the sparse architecture search workflow in `sparse_llm/`, especially the separation between common search logic and model-specific adapters such as Qwen3.
+
+- [CUDA Kernel Guide](kernels/cuda/README.md)  
+  This document covers the CUDA extension layout, build process, dispatcher registration, and the recommended steps for adding a new CUDA kernel.
+
+- [Qwen3 Layer-Block Sparsity Experiment](sparse_llm/qwen3/experiment/README.md)  
+  A focused experiment note for sweeping contiguous Qwen3 layer blocks, collecting decode and perplexity metrics, and producing summary JSON and CSV outputs.
