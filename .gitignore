@@ -5,3 +5,5 @@ __pycache__
 *.egg-info
 /kernels/cuda/build/*
 !/kernels/cuda/build/README.md
+.pytest_cache
+sparse_llm/llama
