@@ -125,6 +125,7 @@ def _config_group_key(r: dict) -> tuple:
     return (
         r.get("pattern_type", ""),
         r.get("topk"),
+        r.get("keep_ratio"),
         r.get("window_size"),
         r.get("block_size"),
         r.get("mode", ""),
@@ -134,10 +135,13 @@ def _config_group_key(r: dict) -> tuple:
 def _config_label(r: dict) -> str:
     pattern = r.get("pattern_type", "?")
     topk = r.get("topk")
+    keep_ratio = r.get("keep_ratio")
     window_size = r.get("window_size")
     block_size = r.get("block_size")
     if topk is not None:
         return f"{pattern} k={topk}"
+    if keep_ratio is not None:
+        return f"{pattern} keep={keep_ratio:.0%}"
     if window_size is not None:
         return f"{pattern} w={window_size}"
     if block_size is not None:

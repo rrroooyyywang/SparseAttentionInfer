@@ -49,6 +49,9 @@ def build_configs_from_yaml(data: dict) -> list[ExperimentConfig]:
             - type: topk
               backend: masked_sdpa
               topk: [32, 64]
+            - type: bigbird
+              backend: triton_bigbird
+              keep_ratio: [0.25, 0.5]
             - type: local_window
               backend: masked_sdpa
               window_size: [64, 128]
@@ -74,13 +77,15 @@ def build_configs_from_yaml(data: dict) -> list[ExperimentConfig]:
         p_type = p["type"]
         backend = p.get("backend", "masked_sdpa")
         topks = _ensure_list(p.get("topk", [None])) if "topk" in p else [None]
+        keep_ratios = _ensure_list(p.get("keep_ratio", [None])) if "keep_ratio" in p else [None]
         window_sizes = _ensure_list(p.get("window_size", [None])) if "window_size" in p else [None]
         block_sizes = _ensure_list(p.get("block_size", [None])) if "block_size" in p else [None]
-        for topk, ws, bs in itertools.product(topks, window_sizes, block_sizes):
+        for topk, keep_ratio, ws, bs in itertools.product(topks, keep_ratios, window_sizes, block_sizes):
             pattern_cfgs.append({
                 "pattern_type": p_type,
                 "backend": backend,
                 "topk": topk,
+                "keep_ratio": keep_ratio,
                 "window_size": ws,
                 "block_size": bs,
             })
@@ -101,6 +106,7 @@ def build_configs_from_yaml(data: dict) -> list[ExperimentConfig]:
             backend=pat["backend"],
             causal=causal,
             topk=pat["topk"],
+            keep_ratio=pat["keep_ratio"],
             window_size=pat["window_size"],
             block_size=pat["block_size"],
             num_warmup=num_warmup,

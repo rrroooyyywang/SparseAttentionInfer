@@ -11,7 +11,7 @@ class ExperimentConfig:
     """
     Full specification for one benchmark run.
 
-    Pattern params (topk, window_size, block_size) are optional;
+    Pattern params (topk, keep_ratio, window_size, block_size) are optional;
     only the ones relevant to pattern_type need to be set.
     """
     batch_size: int = 1
@@ -26,6 +26,7 @@ class ExperimentConfig:
     causal: bool = True
     # Pattern params
     topk: int | None = None
+    keep_ratio: float | None = None
     window_size: int | None = None
     block_size: int | None = None
     # Measurement params
@@ -72,6 +73,7 @@ class ExperimentConfig:
             "backend": self.backend,
             "causal": self.causal,
             "topk": self.topk,
+            "keep_ratio": self.keep_ratio,
             "window_size": self.window_size,
             "block_size": self.block_size,
         }

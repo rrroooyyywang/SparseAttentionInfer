@@ -15,7 +15,11 @@ from sparse_attentions.patterns.base import PatternMetadata
 
 def _get_pattern(cfg: ExperimentConfig):
     """Factory: return the right SparsePattern instance for the config."""
-    from sparse_attentions.patterns.bigbird_pattern import BigBirdPattern, BigBird2Pattern
+    from sparse_attentions.patterns.bigbird_pattern import (
+        BigBird2Pattern,
+        BigBirdKeepRatioPattern,
+        BigBirdPattern,
+    )
     from sparse_attentions.patterns.causal_dense import DenseCausalPattern
     from sparse_attentions.patterns.local_window import LocalWindowPattern
     from sparse_attentions.patterns.topk_pattern import TopKPattern
@@ -26,6 +30,8 @@ def _get_pattern(cfg: ExperimentConfig):
         assert cfg.topk is not None, "topk must be set for pattern_type='topk'"
         return TopKPattern(top_k=cfg.topk)
     if cfg.pattern_type == "bigbird":
+        if cfg.keep_ratio is not None:
+            return BigBirdKeepRatioPattern(keep_ratio=cfg.keep_ratio, n_heads=cfg.num_heads)
         assert cfg.topk is not None, "topk must be set for pattern_type='bigbird'"
         return BigBirdPattern(top_k=cfg.topk, n_heads=cfg.num_heads)
     if cfg.pattern_type == "bigbird2":

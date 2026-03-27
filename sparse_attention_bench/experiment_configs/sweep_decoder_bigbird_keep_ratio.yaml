@@ -1,0 +1,23 @@
+experiment:
+  batch_size: 1
+  num_heads: 8
+  head_dim: 64
+  seq_len: [64, 128, 256, 512, 1024, 2048]
+  dtype: bf16
+  device: cuda
+  mode: [prefill, decode]
+  causal: true
+  num_warmup: 10
+  num_iters: 50
+
+  patterns:
+    - type: dense
+      backend: dense_sdpa
+
+    - type: bigbird
+      backend: triton_universal
+      keep_ratio: [0.25, 0.5]
+    
+    - type: bigbird
+      backend: triton_universal    # Triton block-sparse kernel
+      topk: [64, 128]
