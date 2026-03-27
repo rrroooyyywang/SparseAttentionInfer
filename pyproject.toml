@@ -7,12 +7,23 @@ name = "sparse-attention-infer"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
-    "torch",
+    "torch==2.7.1",
     "triton",
     "matplotlib",
     "pyyaml",
+    "datasets",
+    "transformers",
+    "optuna"
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["sparse_attention_bench*", "sparse_attentions*", "kernels*"]
+include = ["sparse_attention_bench*", "sparse_attentions*", "kernels*", "sparse_llm*"]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
