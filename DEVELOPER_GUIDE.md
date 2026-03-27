@@ -1,615 +1,931 @@
-# Developer Guide: Benchmarking Sparse Attention Algorithms
-
-This guide walks you through adding your own sparse attention algorithm to the benchmark harness and running all available benchmark types.
+# Developer Guide
 
 ---
 
-## Table of Contents
+## Recommended Workflow
 
-1. [Repo Layout](#1-repo-layout)
-2. [Core Concepts](#2-core-concepts)
-3. [Adding a Custom Sparse Pattern](#3-adding-a-custom-sparse-pattern)
-4. [Adding a Custom Compute Backend (Optional)](#4-adding-a-custom-compute-backend-optional)
-5. [Writing a Real Sparse Kernel (Triton / CUDA)](#5-writing-a-real-sparse-kernel-triton--cuda)
-6. [Running Benchmarks](#6-running-benchmarks)
-7. [Understanding the Outputs](#7-understanding-the-outputs)
-8. [Quick Reference](#8-quick-reference)
+It is recommended to proceed in the following order instead of jumping straight into writing CUDA kernels or integrating with a large model:
+
+1. Start by prototyping patterns and backends in `sparse_attentions/`.
+2. Use `sparse_attention_bench/` for single-layer and ToyDecoder validation.
+3. Once you confirm the direction is worth pursuing, move on to Triton or CUDA kernels in `kernels/`.
+4. Then connect the new path into `sparse_llm/qwen3/` for real-model benchmarking.
+5. Only after that should you move on to sparse architecture search.
+
+This makes it much easier to identify whether a problem comes from:
+
+- pattern semantics
+- backend implementation
+- kernel execution path
+- benchmark configuration
+- Qwen3 integration
 
 ---
 
-## 1. Repo Layout
+## 1. Current Repository Structure
 
-```
+```text
 SparseAttentionInfer/
-├── sparse_attention_bench/             ← benchmark harness (pure Python)
-│   ├── patterns/                       ← WHERE YOU ADD YOUR SPARSE PATTERN
-│   │   ├── base.py                     ← SparsePattern ABC + PatternMetadata
-│   │   ├── causal_dense.py             ← Built-in: full causal dense
-│   │   ├── topk_pattern.py             ← Built-in: row-wise top-k
-│   │   ├── bigbird_pattern.py          ← Built-in: BigBird structured sparse
-│   │   └── local_window.py             ← Built-in: sliding local window
-│   │
-│   ├── attention/                      ← Compute backends (how attention is computed)
-│   │   ├── base.py                     ← AttentionBackend ABC
-│   │   ├── dense_sdpa.py               ← PyTorch scaled_dot_product_attention
-│   │   ├── masked_sdpa.py              ← SDPA with boolean mask / top-k selection
-│   │   ├── gather_sparse.py            ← Gather-based sparse (local patterns)
-│   │   ├── triton_backend.py           ← Template for Triton kernel backends
-│   │   └── __init__.py                 ← Backend registry + get_backend()
-│   │
-│   ├── runners/
-│   │   ├── benchmark_runner.py         ← Core timing engine (pattern build + attention)
-│   │   └── sweep_runner.py             ← YAML-driven multi-config sweep
-│   │
-│   ├── benchmarks/
-│   │   ├── bench_layer.py              ← Single attention layer benchmark CLI
-│   │   ├── bench_decoder.py            ← Full decoder block benchmark CLI
-│   │   ├── bench_proxy.py              ← GPU heuristic / accuracy proxy CLI
-│   │   └── bench_matmul.py             ← Sparse GEMM accuracy benchmark CLI
-│   │
-│   ├── metrics/
-│   │   ├── accuracy.py                 ← relative_error, cosine_sim, KL divergence
-│   │   ├── latency.py                  ← CUDA-event timing
-│   │   ├── memory.py                   ← Peak memory measurement
-│   │   ├── flops.py                    ← Theoretical FLOPs / arithmetic intensity
-│   │   └── sparse_matmul.py            ← Sparse GEMM metrics
-│   │
-│   ├── models/                         ← Pluggable decoder models (for bench_decoder)
-│   │   ├── attention_layer.py
-│   │   ├── decoder_block.py
-│   │   ├── kv_cache.py
-│   │   └── proxy_models.py
-│   │
-│   ├── proxy/                          ← Roofline-based GPU speedup estimator
-│   │   ├── estimator.py
-│   │   ├── evaluator.py
-│   │   ├── gpu_profiles.py
-│   │   ├── roofline.py
-│   │   └── plotting.py
-│   │
-│   ├── experiment_configs/             ← YAML experiment configs
-│   │   ├── sweep_seq_len.yaml
-│   │   ├── bigbird.yaml
-│   │   ├── topk.yaml
-│   │   ├── local_window.yaml
-│   │   └── dense.yaml
-│   │
-│   ├── outputs/                        ← Generated results (gitignored)
-│   │   ├── json/                       ← Sweep JSON results
-│   │   ├── csv/                        ← Sweep CSV results
-│   │   └── figures/                    ← Latency plots
-│   │
-│   └── config.py                       ← ExperimentConfig dataclass
-│
-├── kernels/                            ← real Triton / CUDA sparse kernels
-│   ├── triton/                         ← @triton.jit kernel files (.py)
-│   └── cuda/                           ← CUDA extension (setup.py build)
-│       ├── setup.py                    ← builds the .so via CUDAExtension
-│       ├── __init__.py                 ← loads the .so; imports ops wrappers
-│       ├── README.md                   ← CUDA kernel development guide
-│       ├── build/                      ← compiled SparseAttentionExtension.so
-│       ├── src/csrc/
-│       │   ├── bind.cu                 ← TORCH_LIBRARY registration + PYBIND11_MODULE
-│       │   └── helloWorldKernel.cu     ← example kernel (no main())
-│       ├── src/torch_wrappers/
-│       │   └── ops.py                  ← Python-facing op wrappers + register_fake
-│       └── test/
-│           └── test_helloworld.py      ← plain Python test
-│
-├── profiling/                          ← standalone profiling scripts + outputs
-│   ├── sparse_prof.py
-│   ├── sparse_decoder_prof.py
-│   ├── gpu_profiles.toml
-│   └── out/                            ← profiling plots + JSON
-│
-├── requirements.txt
 ├── pyproject.toml
-├── DEVELOPER_GUIDE.md                  ← this file
-└── README.md
+├── README.md
+├── DEVELOPER_GUIDE.md
+│
+├── sparse_attentions/
+│   ├── attention/
+│   ├── patterns/
+│   ├── models/
+│   └── utils.py
+│
+├── sparse_attention_bench/
+│   ├── config.py
+│   ├── paths.py
+│   ├── benchmarks/
+│   ├── runners/
+│   ├── metrics/
+│   ├── analytical/
+│   ├── experiment_configs/
+│   └── outputs/
+│
+├── sparse_llm/
+│   ├── common/
+│   └── qwen3/
+│
+└── kernels/
+    ├── triton/
+    └── cuda/
 ```
+
+### 1.1 Responsibility Boundaries
+
+- `sparse_attentions/`
+  A reusable low-level library. It defines patterns, attention backends, and ToyDecoder-related models, and does not load Hugging Face models.
+- `sparse_attention_bench/`
+  The synthetic benchmark layer. It handles random-tensor benchmarks, ToyDecoder benchmarks, sweeps, and the proxy profiler.
+- `sparse_llm/`
+  The real-model layer. `qwen3/` is currently the primary and most complete integration path.
+- `kernels/`
+  Triton and CUDA kernel implementations.
+
+### 1.2 What You Should Read First
+
+It is recommended to read the following files before you start changing anything:
+
+1. `sparse_attentions/patterns/base.py`
+2. `sparse_attentions/attention/base.py`
+3. `sparse_attention_bench/runners/benchmark_runner.py`
+4. `sparse_attention_bench/runners/sweep_runner.py`
+5. `sparse_llm/common/benchmark/contracts.py`
+6. `sparse_llm/qwen3/adapter.py`
+7. `sparse_llm/qwen3/integrations/modeling_sparse_qwen3.py`
+8. `sparse_llm/qwen3/search_adapter.py`
 
 ---
 
-## 2. Core Concepts
+## 2. Environment and Dependencies
 
-The harness separates two orthogonal concerns:
+The current dependency source of truth is `pyproject.toml`:
 
-```
-SparsePattern.build(q, k)  →  PatternMetadata
-        ↓ describes WHICH positions can attend
-AttentionBackend.forward(q, k, v, pattern)  →  output tensor
-        ↓ describes HOW to compute attention
-```
+- Python `>=3.11`
+- `torch==2.7.1`
+- `triton`
+- `matplotlib`
+- `pyyaml`
+- `datasets`
+- `transformers`
+- `optuna`
 
-**`PatternMetadata`** carries four `kind` values:
+The repository documentation also assumes CUDA `12.8`. If you want to run Triton or CUDA paths, that is the default version you should prepare for.
 
-| `kind`    | What it means | Backend behaviour |
-|-----------|---------------|-------------------|
-| `"dense"` | Full causal attention | Backend ignores mask |
-| `"mask"`  | Pre-built `[H, T, T]` bool mask (True = attend) | Backend applies mask before softmax |
-| `"local"` | Same as mask, semantically a sliding window | `GatherSparseBackend` can use gather |
-| `"topk"`  | Data-dependent; only `topk` int is set | Backend selects top-k from raw scores |
-
----
-
-## 3. Adding a Custom Sparse Pattern
-
-This is the **only file you need to write**. The rest of the harness picks it up automatically.
-
-### Step 1 — Create `sparse_attentions/patterns/my_pattern.py`
-
-```python
-import torch
-from sparse_attentions.patterns.base import PatternMetadata, SparsePattern
-
-
-class MyPattern(SparsePattern):
-    """
-    Replace this docstring with what makes your pattern special.
-    """
-
-    def __init__(self, my_param: int):
-        self.my_param = my_param
-        # Optional: add a mask cache to avoid rebuilding each forward pass
-        self._cache: dict = {}
-
-    def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
-        """
-        Args:
-            q: [B, H, T_q, D]
-            k: [B, H, T_k, D]
-            causal: enforce upper-triangular masking on top of your pattern
-        Returns:
-            PatternMetadata
-        """
-        B, H, T_q, D = q.shape
-        T_k = k.size(2)
-        device = q.device
-
-        # --- Build your boolean attention mask ---
-        # True  = this (query, key) pair is ALLOWED to attend
-        # False = masked out (set to -inf before softmax)
-
-        mask = self._build_mask(H, T_q, T_k, device, causal)
-
-        # Estimate what fraction of attention scores are kept (for reporting)
-        keep_ratio = mask.float().mean().item()
-
-        return PatternMetadata(kind="mask", mask=mask, keep_ratio=keep_ratio)
-
-    def _build_mask(
-        self, H: int, T_q: int, T_k: int,
-        device: torch.device, causal: bool,
-    ) -> torch.Tensor:
-        # --- Replace this with your actual mask logic ---
-        # Example: attend to every other key position
-        cols = torch.arange(T_k, device=device)
-        row_mask = (cols % 2 == 0).unsqueeze(0).unsqueeze(0)     # [1, 1, T_k]
-        mask = row_mask.expand(H, T_q, T_k).clone()
-
-        if causal:
-            rows = torch.arange(T_q, device=device)
-            causal_ok = cols.unsqueeze(0) <= rows.unsqueeze(1)    # [T_q, T_k]
-            mask = mask & causal_ok.unsqueeze(0)
-
-        return mask   # [H, T_q, T_k] bool
-```
-
-> **Tips:**
-> - Keep `build()` fast — it is timed separately from the attention compute.
-> - Cache the mask if it only depends on `(T_q, T_k, H, device)` and your parameters.
->   See `LocalWindowPattern._mask_cache` for an example.
-> - If your pattern is data-dependent (needs QK scores to decide which keys to keep),
->   use `kind="topk"` and set `topk=<int>`. The `MaskedSdpaBackend` handles the
->   actual top-k selection from raw scores. See `TopKPattern` for an example.
-
-### Step 2 — Register it in the benchmark runner
-
-Open [`sparse_attention_bench/runners/benchmark_runner.py`](sparse_attention_bench/runners/benchmark_runner.py) and add your pattern to `_get_pattern()`:
-
-```python
-# At the top of the file, add your import:
-from sparse_attentions.patterns.my_pattern import MyPattern
-
-def _get_pattern(cfg: ExperimentConfig):
-    ...
-    # Add this block:
-    if cfg.pattern_type == "my_pattern":
-        assert cfg.block_size is not None, "block_size must be set for my_pattern"
-        return MyPattern(my_param=cfg.block_size)
-    ...
-```
-
-> `ExperimentConfig` has spare fields you can reuse: `topk`, `window_size`, `block_size`.
-> Pick whichever matches your parameter semantically.
-
-### Step 3 — Done. Run a quick single-layer smoke test:
+Recommended:
 
 ```bash
-python -m sparse_attention_bench.benchmarks.bench_layer \
-    --pattern my_pattern \
-    --block-size 64 \
-    --seq-len 512 \
-    --device cpu
+uv sync
 ```
+
+If you are not using `uv`, make sure the dependencies in `pyproject.toml` are installed by some other means.
 
 ---
 
-## 4. Adding a Custom Compute Backend (Optional)
+## 3. Core Sparse Attention Abstractions
 
-Most patterns work fine with `masked_sdpa`. Only implement a custom backend if you have a **real sparse CUDA kernel** or want a fundamentally different compute path.
+The core design of this repository is to separate the attention connectivity pattern from the computation backend:
 
-### Create `sparse_attentions/attention/my_backend.py`
-
-```python
-import torch
-from sparse_attentions.attention.base import AttentionBackend
-from sparse_attentions.patterns.base import PatternMetadata
-
-
-class MyBackend(AttentionBackend):
-    def forward(
-        self,
-        q: torch.Tensor,        # [B, H, T_q, D]
-        k: torch.Tensor,        # [B, H, T_k, D]
-        v: torch.Tensor,        # [B, H, T_k, D]
-        pattern: PatternMetadata,
-    ) -> torch.Tensor:
-        # Your custom kernel / compute logic here
-        ...
-        return output   # [B, H, T_q, D]
+```text
+SparsePattern.build(q, k, causal=True) -> PatternMetadata
+AttentionBackend.forward(q, k, v, pattern) -> output
 ```
 
-### Register it in `sparse_attentions/attention/__init__.py`
+### 3.1 The Pattern Layer
 
-```python
-from sparse_attentions.attention.my_backend import MyBackend
+The abstract definitions live in `sparse_attentions/patterns/base.py`:
 
-_REGISTRY: dict[str, type[AttentionBackend]] = {
-    "dense_sdpa":    DenseSdpaBackend,
-    "masked_sdpa":   MaskedSdpaBackend,
-    "gather_sparse": GatherSparseBackend,
-    "my_backend":    MyBackend,          # ← add this line
-}
-```
+- `SparsePattern`
+- `PatternMetadata`
+
+The current `PatternMetadata.kind` values are:
+
+- `"dense"`
+- `"mask"`
+- `"topk"`
+- `"local"`
+
+In addition to `mask/topk/keep_ratio`, `PatternMetadata` now also supports block-sparse metadata needed by kernels:
+
+- `block_size`
+- `kv_block_list`
+- `block_pairs`
+- `block_pair_offsets`
+
+This means whether a pattern can drive a Triton kernel depends not only on `kind`, but also on whether it provides the correct block-sparse scheduling metadata.
+
+### 3.2 Current Built-in Patterns
+
+The current implementations live in `sparse_attentions/patterns/`:
+
+- `DenseCausalPattern`
+- `TopKPattern`
+- `LocalWindowPattern`
+- `BigBirdPattern`
+- `BigBirdKeepRatioPattern`
+- `BigBird2Pattern`
+
+A few practical notes:
+
+- `TopKPattern` only describes `topk`; the actual top-k selection is performed by the backend.
+- `LocalWindowPattern` generates CSR block-pair metadata when `block_size` is provided, so it can drive `triton_universal`.
+- `BigBirdPattern` and `BigBirdKeepRatioPattern` both build block-sparse schedules, so they can be used with both proxy backends and Triton backends.
+- `BigBirdKeepRatioPattern` also supports `group_sparsities`, which is currently used by the Qwen3 search path.
+
+### 3.3 The Backend Layer
+
+The abstraction lives in `sparse_attentions/attention/base.py`, and the registry is in `sparse_attentions/attention/__init__.py`.
+
+The current registry names are:
+
+- `dense_sdpa`
+- `masked_sdpa`
+- `gather_sparse`
+- `triton_bigbird`
+- `triton_universal`
+
+Their rough roles are:
+
+- `dense_sdpa`
+  The PyTorch SDPA dense baseline.
+- `masked_sdpa`
+  The general baseline path. It supports dense, mask, top-k, and local-window patterns.
+- `gather_sparse`
+  Mainly optimizes fixed-window patterns; if the conditions are not met, it falls back to `masked_sdpa`.
+- `triton_bigbird`
+  A BigBird-specific Triton backend that depends on `kv_block_list`.
+- `triton_universal`
+  A universal Triton block-sparse backend that depends on `block_pairs + block_pair_offsets`.
+
+### 3.4 `actual_backend` Matters
+
+Many backend names are only the requested path and do not guarantee that the corresponding kernel was actually executed.
+
+For example:
+
+- requesting `triton_bigbird` may actually end up using `masked_sdpa_fallback`
+- requesting `triton_universal` may actually end up using `masked_sdpa_fallback`
+
+So when reading benchmark results, always check `actual_backend` rather than only the configured `backend`.
 
 ---
 
-## 5. Writing a Real Sparse Kernel (Triton / CUDA)
+## 4. Recommended Development Stages
 
-Sections 3 and 4 let you benchmark algorithms that still run through PyTorch ops
-(masked SDPA, gather/scatter). When you are ready to write a **real sparse kernel**
-that avoids computing masked-out scores entirely, use the `kernels/` folder.
+### 4.1 Phase 0: Understand the Repository Before Editing
 
----
+Look at these directories first:
 
-### 5a. Triton kernel
+1. `sparse_attentions/patterns/`
+2. `sparse_attentions/attention/`
+3. `sparse_attention_bench/runners/`
+4. `sparse_attention_bench/experiment_configs/`
+5. `kernels/triton/` and `kernels/cuda/`
+6. `sparse_llm/qwen3/`
 
-Put a `@triton.jit` function in `kernels/triton/your_kernel.py`.
-The Python entry point must match this signature:
+### 4.2 Phase 1: Prototype the Pattern / Backend First
 
-```python
-def triton_<name>_attn(
-    q: torch.Tensor,   # [B, H, T_q, D]  fp16 / bf16, contiguous
-    k: torch.Tensor,   # [B, H, T_k, D]
-    v: torch.Tensor,   # [B, H, T_k, D]
-    **kernel_args,     # e.g. top_k=64, causal=True
-) -> torch.Tensor:     # [B, H, T_q, D]
-```
+The goal here is to validate the sparse strategy itself and the attention computation path before you get stuck in kernel details.
 
----
+Recommended steps:
 
-### 5b. CUDA kernel — step by step
+1. First decide whether your sparse strategy is closer to `mask`, `topk`, or block-sparse.
+2. Add the pattern in `sparse_attentions/patterns/`.
+3. Add a backend in `sparse_attentions/attention/`, or reuse an existing one first.
+4. Register the pattern in `_get_pattern()` inside `sparse_attention_bench/runners/benchmark_runner.py`.
+5. If you want to pass parameters directly from the CLI, then also extend the `choices` in `bench_layer.py` and `bench_decoder.py`.
 
-The `kernels/cuda/` folder is a pre-built PyTorch extension. All CUDA ops share
-one compiled `.so` and one namespace (`cuda_sparse_attention`).
-See [`kernels/cuda/README.md`](kernels/cuda/README.md) for the full reference.
+The safest starting point is usually:
 
-#### Step 1 — Write the kernel — `kernels/cuda/src/csrc/<name>Kernel.cu`
+- pattern: start from `local_window.py` or `bigbird_pattern.py`
+- backend: reuse `masked_sdpa` first
 
-```cuda
-// No main(). Only __global__ kernel + a host wrapper that returns a Tensor.
-#include <torch/extension.h>
-
-__global__ void myKernel(/* args */) { ... }
-
-torch::Tensor my_op_impl(torch::Tensor q, torch::Tensor k) {
-    // launch kernel, synchronize, return output tensor
-}
-```
-
-#### Step 2 — Register in `kernels/cuda/src/csrc/bind.cu`
-
-```cpp
-#include "<name>Kernel.cu"
-
-TORCH_LIBRARY_FRAGMENT(cuda_sparse_attention, m) {
-    m.def("my_op(Tensor q, Tensor k) -> Tensor");
-}
-
-// Use CUDA when op has tensor inputs (dispatcher infers device from tensors).
-// Use CompositeExplicitAutograd when op has NO tensor inputs.
-TORCH_LIBRARY_IMPL(cuda_sparse_attention, CUDA, m) {
-    m.impl("my_op", &my_op_impl);
-}
-```
-
-> **Namespace:** always use `cuda_sparse_attention`. Never use `cuda` — PyTorch
-> already owns that namespace and a second `TORCH_LIBRARY(cuda, …)` will crash at
-> load time. Use `TORCH_LIBRARY_FRAGMENT` (not `TORCH_LIBRARY`) when adding ops
-> to the shared namespace across multiple files.
-
-#### Step 3 — Add a Python wrapper — `kernels/cuda/src/torch_wrappers/ops.py`
-
-```python
-def my_op(q: Tensor, k: Tensor) -> Tensor:
-    return torch.ops.cuda_sparse_attention.my_op.default(q, k)
-
-@torch.library.register_fake("cuda_sparse_attention::my_op")
-def _(q, k):
-    return torch.empty_like(q)   # describe output shape for torch.compile
-```
-
-#### Step 4 — Build the extension
+Single-case validation example:
 
 ```bash
-# from kernels/cuda/
-CUDA_HOME=/usr/local/cuda-12.8 PATH=/usr/local/cuda-12.8/bin:$PATH \
-    python setup.py build_ext --inplace
+uv run python -m sparse_attention_bench.benchmarks.bench_layer \
+  --pattern local_window \
+  --backend masked_sdpa \
+  --window-size 128 \
+  --seq-len 512 \
+  --dtype fp16 \
+  --device cuda
 ```
 
-The `.so` is placed in `kernels/cuda/build/`. Loading `kernels.cuda` anywhere
-in Python triggers `__init__.py`, which imports the `.so` and registers all ops.
+### 4.3 Phase 2: Use the Benchmark Harness for Systematic Comparison
 
-#### Step 5 — Write a test — `kernels/cuda/test/test_<name>.py`
+The goal is to measure speed, memory, and accuracy across different `seq_len`, `mode`, and `dtype` settings.
 
-```python
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))  # project root
+Prefer using `sparse_attention_bench/runners/sweep_runner.py`.
 
-import torch
-import kernels.cuda  # loads .so, registers all cuda_sparse_attention ops
+Common sweeps:
 
-def test_my_op():
-    q = torch.randn(1, 4, 16, 64, device="cuda", dtype=torch.float16)
-    k = torch.randn(1, 4, 16, 64, device="cuda", dtype=torch.float16)
-    out = torch.ops.cuda_sparse_attention.my_op(q, k)
-    assert out.shape == q.shape
+1. `sparse_attention_bench/experiment_configs/sweep_seq_len.yaml`
+   Basic sweep across dense / topk / local_window / bigbird.
+2. `sparse_attention_bench/experiment_configs/sweep_seq_len_base_vs_bigbird.yaml`
+   Compare `masked_sdpa`, `triton_bigbird`, and `triton_universal`.
+3. `sparse_attention_bench/experiment_configs/sweep_decoder_bigbird_keep_ratio.yaml`
+   Compare BigBird `keep_ratio` and `topk`-related configurations.
 
-if __name__ == "__main__":
-    test_my_op()
-    print("PASSED")
-```
+Example:
 
 ```bash
-python kernels/cuda/test/test_<name>.py
+uv run python -m sparse_attention_bench.runners.sweep_runner \
+  --config sparse_attention_bench/experiment_configs/sweep_seq_len.yaml \
+  --tag sweep \
+  --plot
 ```
+
+### 4.4 Phase 3: Validate at the ToyDecoder Level
+
+Do not only look at single-layer attention latency. Also validate the behavior of a full decoder block / ToyDecoder.
+
+Entry points:
+
+1. `sparse_attention_bench/benchmarks/bench_decoder.py`
+2. `sparse_attention_bench/runners/decoder_sweep_runner.py`
+
+Example:
+
+```bash
+uv run python -m sparse_attention_bench.runners.decoder_sweep_runner \
+  --config sparse_attention_bench/experiment_configs/sweep_seq_len_base_vs_bigbird.yaml \
+  --tag e2e_bigbird \
+  --plot
+```
+
+Before moving to the next stage, it is recommended to confirm:
+
+1. The single-layer benchmark shows the method is not obviously broken.
+2. `top1_match_rate`, `kl_divergence`, and `rel_err` on ToyDecoder are still acceptable.
+3. The bottleneck is actually in the attention kernel rather than pattern construction or Python/framework overhead.
+
+### 4.5 Phase 4: Only Then Write Triton / CUDA Kernels
+
+The goal of this phase is to replace proxy backends with real kernels instead of continuing to rely on `masked_sdpa` for "fake speedups."
+
+There are two implementation paths:
+
+1. Triton kernels: `kernels/triton/`
+2. CUDA extensions: `kernels/cuda/`
+
+Recommended order:
+
+1. First make the pattern produce the metadata the kernel actually needs.
+2. Then write the backend wrapper in `sparse_attentions/attention/`.
+3. Finally register the backend in `sparse_attentions/attention/__init__.py`.
+
+### 4.6 Phase 5: Connect the New Path into Qwen3
+
+Key files:
+
+1. `sparse_llm/qwen3/integrations/modeling_sparse_qwen3.py`
+2. `sparse_llm/qwen3/integrations/sparse_config.py`
+3. `sparse_llm/qwen3/adapter.py`
+4. `sparse_llm/qwen3/cli_args.py`
+
+If you add a new backend, the wiring usually looks like this:
+
+1. Register its name in `sparse_attentions/attention/__init__.py`.
+2. Add it to the `--backend` choices in `sparse_llm/qwen3/cli_args.py`.
+3. If it participates in `auto` selection, update `_resolve_backend_candidates()`.
+4. If it introduces new runtime constraints, update `validate_sparse_kernel_runtime()`.
+5. If it depends on new pattern metadata, update the corresponding construction logic in `modeling_sparse_qwen3.py`.
+
+### 4.7 Phase 6: Do Sparse Architecture Search Last
+
+This stage is currently mainly for Qwen3.
+
+Recommended order:
+
+1. Set the default model, backend, search budget, and output path in `user_config.py`.
+2. Start with a small search space.
+3. Confirm the runtime is actually using a Triton kernel before trusting the search results.
+
+At the moment, `Qwen3SearchAdapter.validate_trial_metrics()` requires `backend_actual` for sparse trials to really be a Triton path rather than a fallback.
 
 ---
 
-### Step 6 — Wrap as an AttentionBackend (both Triton and CUDA)
+## 5. Current State of `sparse_attention_bench/`
 
-```python
-# sparse_attentions/attention/my_kernel_backend.py
-from sparse_attentions.attention.base import AttentionBackend
-import kernels.cuda  # noqa: F401
+### 5.1 `ExperimentConfig`
 
-class MyKernelBackend(AttentionBackend):
-    def forward(self, q, k, v, pattern):
-        return torch.ops.cuda_sparse_attention.my_op(q, k, v)
-```
+`ExperimentConfig` in `sparse_attention_bench/config.py` is the core input object for layer benchmarks and sweeps.
 
-Register it in `attention/__init__.py`:
+Key fields:
 
-```python
-from sparse_attentions.attention.my_kernel_backend import MyKernelBackend
-_REGISTRY["my_kernel"] = MyKernelBackend
-```
+- `batch_size`
+- `num_heads`
+- `head_dim`
+- `seq_len`
+- `dtype`
+- `device`
+- `mode`
+- `pattern_type`
+- `backend`
+- `topk`
+- `keep_ratio`
+- `window_size`
+- `block_size`
+- `num_warmup`
+- `num_iters`
 
-The backend receives a `PatternMetadata` object with:
+Only causal decoder attention is currently supported; `causal=False` will fail immediately.
 
-| Field | Type | Set when |
-|---|---|---|
-| `kind` | `str` | always — `"dense"`, `"mask"`, `"topk"`, `"local"` |
-| `mask` | `Tensor [H,T,T]` bool | `kind="mask"` or `"local"` |
-| `topk` | `int` | `kind="topk"` |
-| `keep_ratio` | `float` | always — useful for reporting |
+### 5.2 `benchmark_runner.py`
 
-Then use it in a sweep YAML:
+`sparse_attention_bench/runners/benchmark_runner.py` does the following:
 
-```yaml
-patterns:
-  - type: topk
-    backend: my_kernel    # your real kernel
-    topk: [32, 64, 128]
-  - type: topk
-    backend: masked_sdpa  # PyTorch baseline for comparison
-    topk: [32, 64, 128]
-```
+1. Generates random Q/K/V
+2. Builds the pattern
+3. Runs the dense reference output
+4. Measures pattern build, attention compute, and combined latency separately
+5. Measures peak memory
+6. Computes accuracy metrics
 
-The benchmark runner automatically measures and compares:
-- **Pattern build time** vs **kernel compute time** separately
-- Accuracy vs dense SDPA baseline (`rel_err`, `cosine_sim`)
-- Peak memory
+The current `_get_pattern()` supports:
 
----
+- `dense`
+- `topk`
+- `bigbird`
+- `bigbird2`
+- `local_window`
 
-## 6. Running Benchmarks
+One practical mismatch to be aware of:
 
-### 6.1 Single attention layer — quick check
+- `benchmark_runner` already supports `bigbird2`
+- but the direct CLI in `bench_layer.py` and `bench_decoder.py` does not yet expose `bigbird2` in `choices`
+
+### 5.3 Current Benchmark Entry Points
+
+#### `bench_layer.py`
+
+A single-layer attention benchmark, useful for quickly checking a specific pattern/backend combination.
 
 ```bash
-# With your new pattern
-python -m sparse_attention_bench.benchmarks.bench_layer \
-    --pattern my_pattern \
-    --block-size 64 \
-    --seq-len 512 \
-    --num-heads 8 \
-    --head-dim 64 \
-    --dtype fp16 \
-    --device cuda
-
-# Built-in patterns for comparison
-python -m sparse_attention_bench.benchmarks.bench_layer --pattern dense --seq-len 512
-python -m sparse_attention_bench.benchmarks.bench_layer --pattern topk  --topk 64 --seq-len 512
+uv run python -m sparse_attention_bench.benchmarks.bench_layer \
+  --pattern topk \
+  --topk 64 \
+  --backend masked_sdpa \
+  --seq-len 512 \
+  --device cuda
 ```
 
-Output (JSON to stdout): latency mean/p50/p95, peak memory, relative error vs dense.
+#### `sweep_runner.py`
 
-### 6.2 Sweep across seq_len / sparsity — with plots
+Runs YAML sweeps for layer benchmarks and supports matrix expansion through `patterns:`.
 
-**Create a YAML config** (e.g. `sparse_attention_bench/experiment_configs/my_sweep.yaml`):
+```bash
+uv run python -m sparse_attention_bench.runners.sweep_runner \
+  --config sparse_attention_bench/experiment_configs/sweep_seq_len.yaml \
+  --tag sweep_seq_len \
+  --plot
+```
+
+#### `decoder_sweep_runner.py`
+
+Runs end-to-end sweeps on ToyDecoder. The dense and sparse decoders share the same randomly initialized weights, so this is better suited for comparing accuracy drift.
+
+```bash
+uv run python -m sparse_attention_bench.runners.decoder_sweep_runner \
+  --config sparse_attention_bench/experiment_configs/sweep_seq_len_base_vs_bigbird.yaml \
+  --tag bigbird_compare \
+  --plot
+```
+
+#### `bench_decoder.py`
+
+A single end-to-end ToyDecoder benchmark, useful for quick smoke tests.
+
+#### `bench_proxy.py`
+
+A proxy profiler based on GPU parameter tables. This is not a real kernel benchmark; it is better suited for answering whether something looks promising in theory or heuristically.
+
+```bash
+uv run python -m sparse_attention_bench.benchmarks.bench_proxy \
+  --gpu-profile rtx_4090 \
+  --no-show
+```
+
+#### `bench_matmul.py`
+
+A toy sparse GEMM benchmark at the matrix level, mainly for theoretical MACs and approximation error.
+
+### 5.4 Be Careful: There Are Two YAML Formats
+
+This is one of the easiest places to get confused in this repository.
+
+There are currently two different YAML styles:
+
+1. sweep YAML
+   Read by `sweep_runner.py`, using `patterns:` list expansion.
+2. single-experiment YAML
+   Read by `bench_layer.py --config`, where fields should map directly to a single `ExperimentConfig`.
+
+Most of the existing files in `sparse_attention_bench/experiment_configs/` are of the first type, i.e. sweep YAML.
+
+For example, this:
 
 ```yaml
 experiment:
   batch_size: 1
   num_heads: 8
   head_dim: 64
-  seq_len: [128, 512, 1024, 2048, 4096]
+  seq_len: 512
   dtype: fp16
   device: cuda
-  mode: [prefill, decode]
-  causal: true
-
+  mode: prefill
   patterns:
-    - type: dense
-      backend: dense_sdpa
-
-    - type: my_pattern          # your new algorithm
+    - type: topk
       backend: masked_sdpa
-      block_size: [32, 64, 128] # swept automatically
+      topk: 64
+```
 
-    - type: topk                # comparison baseline
-      backend: masked_sdpa
-      topk: [64, 128]
+is meant for `sweep_runner.py`, not for `bench_layer --config`.
 
+If you want a single-experiment YAML for `bench_layer --config`, it should look like this instead:
+
+```yaml
+experiment:
+  batch_size: 1
+  num_heads: 8
+  head_dim: 64
+  seq_len: 512
+  dtype: fp16
+  device: cuda
+  mode: prefill
+  pattern_type: topk
+  backend: masked_sdpa
+  topk: 64
+  causal: true
   num_warmup: 20
   num_iters: 100
 ```
 
-**Run the sweep with graph output:**
+Do not mix these two formats.
 
-```bash
-python -m sparse_attention_bench.runners.sweep_runner \
-    --config sparse_attention_bench/experiment_configs/my_sweep.yaml \
-    --tag my_sweep \
-    --plot
-```
+### 5.5 Direct CLI and Underlying Capability Are Not Fully Aligned
 
-Outputs:
-- `sparse_attention_bench/outputs/json/my_sweep.json`
-- `sparse_attention_bench/outputs/csv/my_sweep.csv`
-- `sparse_attention_bench/outputs/figures/my_sweep_total_time_ms_mean.png`
-- `sparse_attention_bench/outputs/figures/my_sweep_attention_time_ms_mean.png`
-- `sparse_attention_bench/outputs/figures/my_sweep_pattern_build_time_ms_mean.png`
+The direct CLI options exposed by `bench_layer.py` and `bench_decoder.py` are narrower than what the underlying registry and runner actually support.
 
-### 6.3 Full decoder block benchmark
+For example:
 
-Tests your pattern inside a stacked transformer decoder (embedding → N×DecoderBlock → LM head):
+- `triton_universal` is not exposed in the backend choices of `bench_layer.py`
+- `bigbird2` is not exposed in the pattern choices of `bench_layer.py` / `bench_decoder.py`
+- `keep_ratio` is also better handled through sweep configs than through the direct CLI
 
-```bash
-# Prefill: measure full forward pass at one sequence length
-python -m sparse_attention_bench.benchmarks.bench_decoder \
-    --pattern my_pattern \
-    --block-size 64 \
-    --seq-len 512 \
-    --num-layers 4 \
-    --mode prefill
-
-# Decode: single new token step with pre-filled KV cache
-python -m sparse_attention_bench.benchmarks.bench_decoder \
-    --pattern my_pattern \
-    --block-size 64 \
-    --seq-len 4096 \
-    --num-layers 4 \
-    --mode decode \
-    --kv-lens 128 512 2048
-```
-
-### 6.4 Proxy benchmark — heuristic accuracy + GPU speedup curves
-
-No real GPU required. Estimates accuracy degradation and theoretical GPU speedup across seq_lens for `top-k` and `bigbird` using a roofline model:
-
-```bash
-python -m sparse_attention_bench.benchmarks.bench_proxy \
-    --gpu-profile rtx_4090 \
-    --num-trials 10 \
-    --no-show \
-    --output-dir outputs/proxy
-
-# List available GPU profiles (rtx_4090, a100_sxm80, h100_sxm80, l40s, generic_ampere)
-python -m sparse_attention_bench.benchmarks.bench_proxy --list-gpu-profiles
-```
-
-Outputs 3 PNG plots to `sparse_attention_bench/outputs/proxy/`: relative error, KL divergence, top-1 match rate, plus prefill/decode speedup curves.
+When you run into those cases, prefer using a sweep runner.
 
 ---
 
-## 7. Understanding the Outputs
+## 6. The Real-Model Layer: `sparse_llm/`
 
-### Latency fields (from bench_layer / sweep)
+You can think of `sparse_llm/` as two layers:
 
-| Field | Description |
-|---|---|
-| `pattern_build_time_ms_mean` | Time to build the sparse mask (your `build()` method) |
-| `attention_time_ms_mean` | Time for the attention kernel (`backend.forward()`) |
-| `total_time_ms_mean` | End-to-end: build + compute |
-| `peak_memory_mb` | GPU peak memory during one full forward |
+1. `sparse_llm/common/`
+   Model-agnostic benchmark/search infrastructure.
+2. `sparse_llm/<model>/`
+   Model-specific adaptation.
 
-### Accuracy fields
+### 6.1 The Common Benchmark Layer
 
-| Field | Description |
-|---|---|
-| `rel_err` | `‖sparse_out − dense_out‖ / ‖dense_out‖` — lower is better |
-| `cosine_sim` | Cosine similarity between sparse and dense outputs — higher is better |
-| `keep_ratio` | Fraction of attention scores not masked out |
-| `sparsity_ratio` | `1 − keep_ratio` |
+`sparse_llm/common/benchmark/` is responsible for:
 
-### Timing is measured correctly
+- generation benchmark
+- perplexity benchmark
+- smoke benchmark
+- runtime metadata collection
 
-- **GPU**: CUDA events (`torch.cuda.Event(enable_timing=True)`) bracket each call; synchronised after.
-- **CPU**: `time.perf_counter` with explicit sync before/after.
-- Pattern build time and attention compute time are measured **independently**, so you can see whether your overhead is in mask construction or in the kernel.
+The core abstractions are in `sparse_llm/common/benchmark/contracts.py`:
+
+- `BenchmarkAdapter`
+- `RuntimeBundle`
+- `RuntimeMetadata`
+- `PrefillResult`
+- `DecodeResult`
+
+When integrating a new model into the common benchmark layer, you should implement its own `BenchmarkAdapter`.
+
+### 6.2 Qwen3 Is Currently the Most Complete Model Integration
+
+`sparse_llm/qwen3/` currently includes:
+
+- CLI
+- dense/sparse generation benchmarks
+- dense/sparse perplexity benchmarks
+- sparse architecture search
+
+Key files:
+
+- `sparse_llm/qwen3/cli.py`
+- `sparse_llm/qwen3/cli_args.py`
+- `sparse_llm/qwen3/adapter.py`
+- `sparse_llm/qwen3/integrations/runtime.py`
+- `sparse_llm/qwen3/integrations/modeling_sparse_qwen3.py`
+- `sparse_llm/qwen3/integrations/sparse_config.py`
+
+### 6.3 Sparse Configurations Currently Supported by Qwen3
+
+From `cli_args.py` and `modeling_sparse_qwen3.py`, the current focus is:
+
+- `pattern`: `local`, `bigbird`
+- `backend`: `auto`, `dense_sdpa`, `masked_sdpa`, `gather_sparse`, `triton_bigbird`, `triton_universal`
+
+BigBird-related parameters:
+
+- `--top-k`
+- `--keep-ratio`
+- `--group-sparsities`
+- `--layer-group-sparsities`
+
+Where:
+
+- `group_sparsities` is the global sparsity per KV group
+- `layer_group_sparsities` is the per-layer override
+- if both are provided, the layer-level configuration takes precedence
+
+### 6.4 How `backend=auto` Is Resolved Now
+
+In `sparse_llm/qwen3/integrations/sparse_config.py`:
+
+- when `pattern=bigbird` and `keep_ratio` or `group_sparsities` is used, `auto` prefers `triton_universal`
+- when `pattern=bigbird` uses the traditional `top_k` BigBird path, `auto` candidates are `["triton_universal", "triton_bigbird"]`
+- when `pattern=local`, `auto` candidates are `["triton_universal"]`
+
+Whether the runtime can actually use a Triton kernel still depends on runtime validation.
+
+### 6.5 Current Limitations of the Qwen3 Sparse Path
+
+These limitations are already hard-coded in the current implementation:
+
+- only plain causal masks are currently supported
+- padding-aware/custom attention masks are not fully wired up yet
+- Triton backends require CUDA
+- Triton backends require `float16` or `bfloat16`
+- Triton backends also require block-sparse scheduling metadata from the pattern
+
+If these conditions are not satisfied, the path falls back to masked SDPA.
+
+### 6.6 Current Usable Qwen3 Commands
+
+#### smoke
+
+```bash
+uv run python -m sparse_llm.qwen3.cli \
+  --model-name-or-path Qwen/Qwen3-4B-Instruct-2507 \
+  --run-mode smoke \
+  --pattern bigbird \
+  --backend auto \
+  --top-k 128 \
+  --dtype bfloat16
+```
+
+#### generation benchmark
+
+```bash
+uv run python -m sparse_llm.qwen3.cli \
+  --model-name-or-path Qwen/Qwen3-4B-Instruct-2507 \
+  --run-mode benchmark_both \
+  --pattern bigbird \
+  --backend triton_universal \
+  --keep-ratio 0.5 \
+  --prebuild-patterns \
+  --fast-benchmark \
+  --plot
+```
+
+#### perplexity benchmark
+
+```bash
+uv run python -m sparse_llm.qwen3.cli \
+  --model-name-or-path Qwen/Qwen3-4B-Instruct-2507 \
+  --run-mode benchmark_both_ppl \
+  --pattern bigbird \
+  --backend triton_universal \
+  --group-sparsities 0.2,0.2,0.4,0.4,0.6,0.6,0.8,0.8 \
+  --ppl-max-length 1024 \
+  --prebuild-patterns \
+  --fast-benchmark \
+  --plot
+```
+
+If you want a strictly offline run that uses only local weights and tokenizers, explicitly add:
+
+```bash
+--no-allow-download
+```
+
+## 7. Current State of Sparse Architecture Search
+
+`sparse_llm/common/sparse_architecture_search/` has now become a shared search framework.
+
+Its core responsibilities are:
+
+- defining `SearchAdapter`
+- defining `SearchStrategy`
+- defining `SearchObjective`
+- managing the baseline + sparse trial execution loop
+- recording trial results
+- computing the Pareto front and plotting results
+
+### 7.1 How Qwen3 Search Is Organized
+
+The Qwen3-specific code lives in:
+
+- `sparse_llm/qwen3/search_adapter.py`
+- `sparse_llm/qwen3/sparse_architecture_search/config.py`
+- `sparse_llm/qwen3/sparse_architecture_search/search.py`
+- `sparse_llm/qwen3/sparse_architecture_search/user_config.py`
+
+The current search target is `self_attn` inside decoder layers, with a focus on group sparsity settings for grouped-query sparse attention.
+
+### 7.2 The Current Search Space
+
+From `search_adapter.py`, the current search mainly revolves around:
+
+- `sampling_grid`
+- `tail_sampling_grid`
+- `prefix_dense_layers`
+- `layer_share_span`
+- `group_sparsities`
+- `layer_group_sparsities`
+
+This means it is not a full search over arbitrary patterns and arbitrary backends. It is much more specifically focused on:
+
+- `Qwen3`
+- grouped-query sparse attention
+- the BigBird keep-ratio / group-sparsity path
+
+### 7.3 Current Search Strategies and Objectives
+
+Currently integrated:
+
+- `RandomSearchStrategy`
+- `BayesianSearchStrategy`
+- `ParetoSpeedVsQualityObjective`
+- `WeightedScalarObjective`
+
+Bayesian search depends on `optuna`, which is already included in the repository dependencies.
+
+### 7.4 Current Usable Search Commands
+
+If `user_config.py` is already filled in, the simplest run is:
+
+```bash
+uv run python -m sparse_llm.qwen3.sparse_architecture_search.search
+```
+
+A run with explicit parameters:
+
+```bash
+uv run python -m sparse_llm.qwen3.sparse_architecture_search.search \
+  --model-name-or-path Qwen/Qwen3-4B-Instruct-2507 \
+  --backend triton_universal \
+  --strategy bayesian \
+  --objective weighted_scalar \
+  --num-samples 20 \
+  --sampling-grid 0.0,0.1,0.2,0.4,0.6,0.8 \
+  --layer-share-span 6
+```
+
+To redraw an existing result plot only:
+
+```bash
+uv run python -m sparse_llm.qwen3.sparse_architecture_search.search \
+  --plot-only-json sparse_llm/qwen3/outputs/metrics/qwen3_bayesian_search_default.json
+```
 
 ---
 
-## 8. Quick Reference
+## 8. The Correct Place to Add a New Pattern
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+### 8.1 Low-Level Implementation
 
-# Smoke test (no GPU needed)
-python -m sparse_attention_bench.benchmarks.bench_layer \
-    --pattern dense --seq-len 128 --device cpu
+Create a new file in `sparse_attentions/patterns/` and implement `SparsePattern.build()`.
 
-# Add your pattern → register in benchmark_runner.py → run:
-python -m sparse_attention_bench.benchmarks.bench_layer \
-    --pattern my_pattern --block-size 64 --seq-len 512 --device cuda
+The minimal skeleton below supports both prefill and decode. The key detail is that when `T_q != T_k`, you must account for `query_offset`; you cannot just assume the query row indices start from 0.
 
-# Sweep with plots
-python -m sparse_attention_bench.runners.sweep_runner \
-    --config sparse_attention_bench/experiment_configs/my_sweep.yaml --tag my_sweep --plot
+```python
+import torch
 
-# Proxy heuristic plots (no GPU needed)
-python -m sparse_attention_bench.benchmarks.bench_proxy \
-    --gpu-profile rtx_4090 --no-show
+from sparse_attentions.patterns.base import (
+    PatternMetadata,
+    SparsePattern,
+    build_block_pairs_from_mask,
+)
+
+
+class MyPattern(SparsePattern):
+    def __init__(self, window_size: int, block_size: int | None = None):
+        self.window_size = window_size
+        self.block_size = block_size
+
+    def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
+        h = q.size(1)
+        t_q = q.size(2)
+        t_k = k.size(2)
+        device = q.device
+
+        query_offset = max(0, t_k - t_q)
+        rows = (query_offset + torch.arange(t_q, device=device)).unsqueeze(1)
+        cols = torch.arange(t_k, device=device).unsqueeze(0)
+
+        mask = cols >= rows - self.window_size + 1
+        if causal:
+            mask = mask & (cols <= rows)
+
+        mask = mask.unsqueeze(0).expand(h, -1, -1)
+
+        block_pairs = None
+        block_pair_offsets = None
+        if self.block_size is not None:
+            block_pairs, block_pair_offsets = build_block_pairs_from_mask(mask, self.block_size)
+
+        return PatternMetadata(
+            kind="local",
+            mask=mask,
+            keep_ratio=float(mask.float().mean().item()),
+            block_size=self.block_size,
+            block_pairs=block_pairs,
+            block_pair_offsets=block_pair_offsets,
+        )
 ```
 
-### Available built-in patterns
+Notes:
 
-| `--pattern` | Key parameter | `kind` returned |
-|---|---|---|
-| `dense` | — | `dense` |
-| `topk` | `--topk K` | `topk` |
-| `bigbird` | `--topk K` | `mask` |
-| `local_window` | `--window-size W` | `local` |
+- If your pattern is not a fixed local-window semantic pattern but a more general boolean mask, then `kind` should be `"mask"` instead.
+- If you want `gather_sparse` to optimize it, it is best to keep the semantics aligned with `"local"`.
 
-### Available backends
+### 8.2 Export and Registration
 
-| `--backend` | Best for |
-|---|---|
-| `dense_sdpa` | Dense baseline; uses PyTorch fused SDPA |
-| `masked_sdpa` | Any pattern with a pre-built mask or top-k |
-| `gather_sparse` | Local/window patterns; gathers K/V for a smaller GEMM |
+At minimum, update:
+
+- `sparse_attentions/patterns/__init__.py`
+- `sparse_attention_bench/runners/benchmark_runner.py`
+
+If you also want the direct CLI to expose it, continue with:
+
+- `sparse_attention_bench/benchmarks/bench_layer.py`
+- `sparse_attention_bench/benchmarks/bench_decoder.py`
+- the corresponding YAML configs
+
+### 8.3 If You Want to Feed It into `triton_universal`
+
+Do not only return a token-level `mask`. You also need to provide:
+
+- `block_size`
+- `block_pairs`
+- `block_pair_offsets`
+
+The simplest way is usually to reuse `build_block_pairs_from_mask()`.
+
+### 8.4 If You Want to Use It with Qwen3
+
+Besides the benchmark runner, you also need to wire it into:
+
+- `sparse_llm/qwen3/integrations/modeling_sparse_qwen3.py`
+- `sparse_llm/qwen3/cli_args.py`
+- `sparse_llm/qwen3/integrations/sparse_config.py`
+
+Otherwise it will only work in the toy benchmark path and not in the real-model path.
+
+---
+
+## 9. The Correct Place to Add a New Backend
+
+### 9.1 Low-Level Implementation
+
+Add a new `AttentionBackend` subclass in `sparse_attentions/attention/`.
+
+### 9.2 Registration
+
+Update `_REGISTRY` in `sparse_attentions/attention/__init__.py`.
+
+### 9.3 If the Backend Can Fall Back
+
+It is recommended to track `actual_backend` like the existing Triton backends do, so benchmark results can distinguish:
+
+- what the user requested
+- what actually ran
+
+### 9.4 If You Want Qwen3 to Select This Backend
+
+You also need to update:
+
+- `sparse_llm/qwen3/cli_args.py`
+- `sparse_llm/qwen3/integrations/sparse_config.py`
+
+Especially:
+
+- CLI choices
+- the candidate resolution for `backend=auto`
+- runtime legality checks
+
+---
+
+## 10. If You Add a New Real-Model Integration, Follow the Qwen3 Structure
+
+If you want to add full support for a new Hugging Face model, the recommended structure is:
+
+```text
+sparse_llm/<model>/
+├── cli.py
+├── cli_args.py
+├── adapter.py
+├── integrations/
+└── sparse_architecture_search/
+```
+
+You will typically need:
+
+- a `BenchmarkAdapter`
+- a sparse runtime/modeling integration
+- generation/perplexity CLI entry points
+- and, if needed, a `SearchAdapter`
+
+What should not go into `common`:
+
+- how the model layers are counted
+- which layers are searchable
+- how GQA/group sparsity maps to concrete config
+- which backends/patterns a specific model accepts
+
+Those concerns should stay in `sparse_llm/<model>/`.
+
+---
+
+## 11. Kernel Development Paths
+
+### 11.1 Triton
+
+Triton kernels live in `kernels/triton/`.
+
+Currently available:
+
+- `bigbird_sparse_attn.py`
+- `universal_sparse_attn.py`
+
+They are called by:
+
+- `TritonBigBirdBackend`
+- `TritonUniversalBackend`
+
+### 11.2 CUDA Extension
+
+The CUDA extension lives in `kernels/cuda/`, which includes:
+
+- `setup.py`
+- `src/csrc/bind.cu`
+- `src/csrc/helloWorldKernel.cu`
+- `src/torch_wrappers/ops.py`
+- `test/test_helloworld.py`
+
+This directory is currently more of a native CUDA extension template/example path than a central dependency of the main benchmark flow.
+
+If you want to continue developing new native CUDA ops here, start with:
+
+- `kernels/cuda/README.md`
+
+Build example:
+
+```bash
+cd kernels/cuda
+CUDA_HOME=/usr/local/cuda-12.8 PATH=/usr/local/cuda-12.8/bin:$PATH \
+  python setup.py build_ext --inplace
+python test/test_helloworld.py
+```
+
+If you are using a `uv` environment, you can also run:
+
+```bash
+uv run python setup.py build_ext --inplace
+uv run python test/test_helloworld.py
+```
+
+Do not hardcode `.venv` paths in the documentation.
+
+---
