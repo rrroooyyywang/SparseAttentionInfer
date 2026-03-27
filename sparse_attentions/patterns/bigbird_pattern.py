@@ -105,6 +105,26 @@ def _next_pow2_min16(x: int) -> int:
     return result
 
 
+def _causal_block_keep_ratio_from_offsets(
+    block_pair_offsets: torch.Tensor,
+    T_q: int,
+    T_k: int,
+    block_size: int,
+) -> float:
+    H = block_pair_offsets.shape[0]
+    num_query_blocks = block_pair_offsets.shape[1] - 1
+    num_kv_blocks = math.ceil(T_k / block_size)
+    query_block_offset = max(0, T_k - T_q) // block_size
+    total_causal_pairs_per_head = sum(
+        min(query_block_offset + qb_local + 1, num_kv_blocks)
+        for qb_local in range(num_query_blocks)
+    )
+    if total_causal_pairs_per_head <= 0:
+        return 0.0
+    kept_pairs = int(block_pair_offsets[:, -1].sum().item())
+    return min(1.0, kept_pairs / (H * total_causal_pairs_per_head))
+
+
 # ── Pattern class ─────────────────────────────────────────────────────────────
 
 class BigBirdPattern(SparsePattern):
@@ -123,9 +143,9 @@ class BigBirdPattern(SparsePattern):
         T_k = k.size(2)
         device = q.device
         mask = self._get_mask(T_q, T_k, device)
-        keep_ratio = self._get_keep_ratio(T_q, T_k)
         kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device)
         block_pairs, block_pair_offsets = self._get_block_pairs(T_q, T_k, device)
+        keep_ratio = self._get_keep_ratio(T_q, T_k, triton_bs, block_pair_offsets)
         return PatternMetadata(
             kind="mask",
             mask=mask,
@@ -136,14 +156,18 @@ class BigBirdPattern(SparsePattern):
             block_pair_offsets=block_pair_offsets,
         )
 
-    def _get_keep_ratio(self, T_q: int, T_k: int) -> float:
-        cache_key = (T_q, T_k, self.top_k)
+    def _get_keep_ratio(
+        self,
+        T_q: int,
+        T_k: int,
+        block_size: int,
+        block_pair_offsets: torch.Tensor,
+    ) -> float:
+        cache_key = (T_q, T_k, self.top_k, block_size)
         if cache_key not in self._keep_ratio_cache:
-            if T_q == T_k:
-                keep_ratio = estimate_bigbird_attention_keep_ratio(T_k, min(self.top_k, T_k))
-            else:
-                keep_ratio = estimate_bigbird_decode_keep_ratio(T_k, min(self.top_k, T_k))
-            self._keep_ratio_cache[cache_key] = keep_ratio
+            self._keep_ratio_cache[cache_key] = _causal_block_keep_ratio_from_offsets(
+                block_pair_offsets, T_q, T_k, block_size
+            )
         return self._keep_ratio_cache[cache_key]
 
     def _get_mask(self, T_q: int, T_k: int, device: torch.device) -> torch.Tensor:
@@ -311,6 +335,305 @@ class BigBirdPattern(SparsePattern):
         return result
 
 
+def bigbird_layout_from_keep_ratio(
+    seq_len: int,
+    keep_ratio: float,
+    *,
+    decode: bool,
+    block_size: int | None = None,
+) -> tuple[int, int, int, int]:
+    if seq_len <= 1:
+        return 1, 1, 1, 0
+
+    keep_ratio = min(max(keep_ratio, 1.0 / seq_len), 1.0)
+    if decode:
+        target_visible_tokens = max(1, math.ceil(keep_ratio * seq_len))
+    else:
+        target_visible_tokens = max(1, math.ceil(keep_ratio * ((seq_len + 1) / 2)))
+
+    if block_size is None:
+        block_size = max(1, min(seq_len, int(math.sqrt(max(1, target_visible_tokens)))))
+    else:
+        block_size = max(1, min(seq_len, int(block_size)))
+    num_blocks = math.ceil(seq_len / block_size)
+    block_budget = max(1, min(num_blocks, math.ceil(target_visible_tokens / block_size)))
+    global_blocks = 1
+    sliding_blocks = min(2, block_budget)
+    random_blocks = max(0, block_budget - global_blocks - sliding_blocks)
+    return block_size, global_blocks, sliding_blocks, random_blocks
+
+
+class BigBirdKeepRatioPattern(SparsePattern):
+    """BigBird variant that directly builds a layout from a target keep ratio."""
+
+    def __init__(
+        self,
+        *,
+        keep_ratio: float | None = None,
+        group_sparsities: list[float] | tuple[float, ...] | None = None,
+        n_heads: int,
+        n_kv_heads: int | None = None,
+    ):
+        if keep_ratio is None and group_sparsities is None:
+            raise ValueError("Either keep_ratio or group_sparsities must be provided.")
+        if keep_ratio is not None and group_sparsities is not None:
+            raise ValueError("Provide keep_ratio or group_sparsities, not both.")
+
+        self.keep_ratio = keep_ratio
+        self.group_sparsities = (
+            None
+            if group_sparsities is None
+            else tuple(float(x) for x in group_sparsities)
+        )
+        self.n_heads = n_heads
+        if self.group_sparsities is not None:
+            if n_kv_heads is not None and len(self.group_sparsities) != n_kv_heads:
+                raise ValueError(
+                    f"group_sparsities has length {len(self.group_sparsities)}, "
+                    f"but n_kv_heads is {n_kv_heads}."
+                )
+            if any(not 0.0 <= x < 1.0 for x in self.group_sparsities):
+                raise ValueError("All group sparsities must satisfy 0 <= sparsity < 1.")
+            self.group_keep_ratios = tuple(1.0 - x for x in self.group_sparsities)
+        else:
+            self.group_keep_ratios = (float(keep_ratio),)
+
+        self.group_count = len(self.group_keep_ratios)
+        if self.group_count <= 0:
+            raise ValueError("At least one group keep ratio is required.")
+        if n_heads % self.group_count != 0:
+            raise ValueError(
+                f"n_heads={n_heads} must be divisible by group_count={self.group_count}."
+            )
+        self.group_size = n_heads // self.group_count
+
+        self._layout_cache: dict[tuple[int, int], tuple[tuple[int, int, int, int], ...]] = {}
+        self._mask_cache: dict = {}
+        self._kv_cache: dict = {}
+        self._keep_ratio_cache: dict = {}
+        self._csr_cache: dict = {}
+        self.last_layout: tuple[int, int, int, int] | None = None
+        self.last_group_layouts: tuple[tuple[int, int, int, int], ...] | None = None
+
+    def _group_index(self, head_idx: int) -> int:
+        return head_idx // self.group_size
+
+    def _layout(self, T_q: int, T_k: int) -> tuple[tuple[int, int, int, int], ...]:
+        cache_key = (T_q, T_k)
+        if cache_key not in self._layout_cache:
+            decode = T_q != T_k
+            if self.group_count == 1:
+                layouts = (
+                    bigbird_layout_from_keep_ratio(
+                        T_k,
+                        self.group_keep_ratios[0],
+                        decode=decode,
+                    ),
+                )
+            else:
+                desired_block_sizes = [
+                    bigbird_layout_from_keep_ratio(T_k, kr, decode=decode)[0]
+                    for kr in self.group_keep_ratios
+                ]
+                shared_block_size = _next_pow2_min16(min(desired_block_sizes))
+                layouts = tuple(
+                    bigbird_layout_from_keep_ratio(
+                        T_k,
+                        kr,
+                        decode=decode,
+                        block_size=shared_block_size,
+                    )
+                    for kr in self.group_keep_ratios
+                )
+            self._layout_cache[cache_key] = layouts
+        return self._layout_cache[cache_key]
+
+    def build(self, q: torch.Tensor, k: torch.Tensor, causal: bool = True) -> PatternMetadata:
+        T_q = q.size(2)
+        T_k = k.size(2)
+        device = q.device
+        group_layouts = self._layout(T_q, T_k)
+        self.last_group_layouts = group_layouts
+        self.last_layout = group_layouts[0] if len(group_layouts) == 1 else None
+        mask = self._get_mask(T_q, T_k, device, group_layouts)
+        kv_block_list, triton_bs = self._get_kv_block_list(T_q, T_k, device, group_layouts)
+        block_pairs, block_pair_offsets = self._get_block_pairs(T_q, T_k, device, group_layouts)
+        keep_ratio = self._get_keep_ratio(T_q, T_k, group_layouts, triton_bs, block_pair_offsets)
+        return PatternMetadata(
+            kind="mask",
+            mask=mask,
+            keep_ratio=keep_ratio,
+            block_size=triton_bs,
+            kv_block_list=kv_block_list,
+            block_pairs=block_pairs,
+            block_pair_offsets=block_pair_offsets,
+        )
+
+    def _get_keep_ratio(
+        self,
+        T_q: int,
+        T_k: int,
+        group_layouts: tuple[tuple[int, int, int, int], ...],
+        block_size: int,
+        block_pair_offsets: torch.Tensor,
+    ) -> float:
+        cache_key = (T_q, T_k, group_layouts, block_size)
+        if cache_key not in self._keep_ratio_cache:
+            self._keep_ratio_cache[cache_key] = _causal_block_keep_ratio_from_offsets(
+                block_pair_offsets, T_q, T_k, block_size
+            )
+        return self._keep_ratio_cache[cache_key]
+
+    def _get_mask(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+        group_layouts: tuple[tuple[int, int, int, int], ...],
+    ) -> torch.Tensor:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, group_layouts)
+        if cache_key in self._mask_cache:
+            return self._mask_cache[cache_key]
+
+        query_offset = max(0, T_k - T_q)
+        q_positions = query_offset + torch.arange(T_q, device=device)
+        k_positions = torch.arange(T_k, device=device)
+        causal_keep = k_positions.unsqueeze(0) <= q_positions.unsqueeze(1)
+        token_mask = torch.zeros(self.n_heads, T_q, T_k, dtype=torch.bool, device=device)
+
+        for h in range(self.n_heads):
+            block_size, global_blocks, sliding_blocks, random_blocks = group_layouts[self._group_index(h)]
+            num_blocks = math.ceil(T_k / block_size)
+            num_query_blocks = math.ceil(T_q / block_size)
+            query_block_offset = query_offset // block_size
+            block_mask_h = torch.zeros(num_query_blocks, num_blocks, dtype=torch.bool, device=device)
+            for qb_local in range(num_query_blocks):
+                qb_abs = query_block_offset + qb_local
+                block_mask_h[qb_local, :global_blocks] = True
+                local_start = max(0, qb_abs - sliding_blocks + 1)
+                block_mask_h[qb_local, local_start:min(qb_abs + 1, num_blocks)] = True
+                rand_ids = select_bigbird_random_block_ids(
+                    qb_abs, h, num_blocks, global_blocks, sliding_blocks, random_blocks
+                )
+                if rand_ids:
+                    block_mask_h[qb_local, torch.tensor(rand_ids, device=device)] = True
+
+            q2b_local = torch.arange(T_q, device=device) // block_size
+            k2b = torch.arange(T_k, device=device) // block_size
+            head_mask = block_mask_h[q2b_local][:, k2b]
+            token_mask[h] = head_mask & causal_keep
+
+        diag_q = torch.arange(T_q, device=device)
+        token_mask[:, diag_q, q_positions] = True
+
+        self._mask_cache[cache_key] = token_mask
+        return token_mask
+
+    def _get_block_pairs(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+        group_layouts: tuple[tuple[int, int, int, int], ...],
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, group_layouts)
+        if cache_key in self._csr_cache:
+            return self._csr_cache[cache_key]
+
+        triton_bs = _next_pow2_min16(group_layouts[0][0])
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks = math.ceil(T_k / triton_bs)
+        query_block_offset = max(0, T_k - T_q) // triton_bs
+
+        all_pairs: list[list[int]] = []
+        all_offsets: list[list[int]] = []
+        max_pairs = 0
+
+        for h in range(self.n_heads):
+            _, global_blocks, sliding_blocks, random_blocks = group_layouts[self._group_index(h)]
+            offsets_h = [0]
+            pairs_h: list[int] = []
+            for qb_local in range(num_query_blocks):
+                qb_abs = query_block_offset + qb_local
+                allowed: set[int] = set(range(global_blocks))
+                local_start = max(0, qb_abs - sliding_blocks + 1)
+                allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                rand_ids = select_bigbird_random_block_ids(
+                    qb_abs, h, num_kv_blocks, global_blocks, sliding_blocks, random_blocks
+                )
+                allowed.update(rand_ids)
+                pairs_h.extend(sorted(allowed))
+                offsets_h.append(len(pairs_h))
+            all_pairs.append(pairs_h)
+            all_offsets.append(offsets_h)
+            max_pairs = max(max_pairs, len(pairs_h))
+
+        pairs_t = torch.zeros(self.n_heads, max(1, max_pairs), dtype=torch.int32, device=device)
+        offsets_t = torch.zeros(self.n_heads, num_query_blocks + 1, dtype=torch.int32, device=device)
+        for h in range(self.n_heads):
+            n = len(all_pairs[h])
+            if n > 0:
+                pairs_t[h, :n] = torch.tensor(all_pairs[h], dtype=torch.int32, device=device)
+            offsets_t[h] = torch.tensor(all_offsets[h], dtype=torch.int32, device=device)
+
+        result = (pairs_t, offsets_t)
+        self._csr_cache[cache_key] = result
+        return result
+
+    def _get_kv_block_list(
+        self,
+        T_q: int,
+        T_k: int,
+        device: torch.device,
+        group_layouts: tuple[tuple[int, int, int, int], ...],
+    ) -> tuple[torch.Tensor, int]:
+        device_key = f"{device.type}:{device.index}"
+        cache_key = (T_q, T_k, device_key, group_layouts)
+        if cache_key in self._kv_cache:
+            return self._kv_cache[cache_key]
+
+        triton_bs = _next_pow2_min16(group_layouts[0][0])
+        num_query_blocks = math.ceil(T_q / triton_bs)
+        num_kv_blocks = math.ceil(T_k / triton_bs)
+        max_kv = max(
+            1,
+            max(
+                global_blocks + sliding_blocks + random_blocks
+                for _, global_blocks, sliding_blocks, random_blocks in group_layouts
+            ),
+        )
+
+        kv_block_list = torch.full(
+            (self.n_heads, num_query_blocks, max_kv),
+            fill_value=-1,
+            dtype=torch.int32,
+            device=device,
+        )
+
+        for h in range(self.n_heads):
+            _, global_blocks, sliding_blocks, random_blocks = group_layouts[self._group_index(h)]
+            for qb_local in range(num_query_blocks):
+                query_offset = max(0, T_k - T_q)
+                query_block_offset = query_offset // triton_bs
+                qb_abs = query_block_offset + qb_local
+
+                allowed: set[int] = set(range(global_blocks))
+                local_start = max(0, qb_abs - sliding_blocks + 1)
+                allowed.update(range(local_start, min(qb_abs + 1, num_kv_blocks)))
+                rand_ids = select_bigbird_random_block_ids(
+                    qb_abs, h, num_kv_blocks, global_blocks, sliding_blocks, random_blocks
+                )
+                allowed.update(rand_ids)
+                for slot, kb in enumerate(sorted(allowed)[:max_kv]):
+                    kv_block_list[h, qb_local, slot] = kb
+
+        result = (kv_block_list, triton_bs)
+        self._kv_cache[cache_key] = result
+        return result
+
+
 # ── BigBird2: first AND last key blocks are global ────────────────────────────
 
 class BigBird2Pattern(BigBirdPattern):
@@ -367,11 +690,6 @@ class BigBird2Pattern(BigBirdPattern):
 
         diag_q = torch.arange(T_q, device=device)
         token_mask[:, diag_q, q_positions] = True
-
-        # Compute keep_ratio from actual mask
-        ratio_key = (T_q, T_k, self.top_k)
-        if ratio_key not in self._keep_ratio_cache:
-            self._keep_ratio_cache[ratio_key] = token_mask.float().mean().item()
 
         self._mask_cache[cache_key] = token_mask
         return token_mask
