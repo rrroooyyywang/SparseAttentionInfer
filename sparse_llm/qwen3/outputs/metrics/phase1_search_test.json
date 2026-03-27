@@ -1,0 +1,1289 @@
+{
+  "search_type": "fixed_eval",
+  "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+  "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+  "auto_config_path": "SparseAttentionInfer/sparse_llm/qwen3/sparse_architecture_search/user_config.py",
+  "num_layers": 36,
+  "num_groups": 8,
+  "num_heads": 32,
+  "sampling_grid": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "tail_sampling_grid": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "prefix_dense_layers": 0,
+  "layer_share_span": 36,
+  "num_samples_requested": 1,
+  "fixed_layer_head_sparsities": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "fixed_layer_group_sparsities": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "dense_repeats": 1,
+  "sparse_repeats": 1,
+  "baseline": {
+    "runtime_name": "dense",
+    "benchmark_type": "perplexity",
+    "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "corpus_source": "sparse_llm/qwen3/sparse_architecture_search/inputs/long_context.txt",
+    "dataset_name": null,
+    "dataset_config": null,
+    "dataset_split": null,
+    "corpus_char_count": 22058,
+    "tokenized_corpus_length": 5446,
+    "window_count": 1,
+    "window_length": 256,
+    "window_stride": 128,
+    "ppl_batch_size": 1,
+    "scored_token_count": 255,
+    "evaluated_token_count": 256,
+    "avg_nll": 1.6328329647288602,
+    "perplexity": 5.1183543160052585,
+    "eval_time_s": 0.21469382499890344,
+    "tokens_per_second": 1187.7379333164447,
+    "prebuild_patterns": false,
+    "prebuild_info": null,
+    "benchmark_mode_info": null,
+    "backend_actual": "dense_hf",
+    "avg_keep_ratio": null,
+    "avg_sparsity": null,
+    "backend_requested": "dense_hf",
+    "pattern": "dense_hf",
+    "repeat_idx": 0,
+    "repeat_count": 1,
+    "raw_runs": [
+      {
+        "runtime_name": "dense",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "sparse_llm/qwen3/sparse_architecture_search/inputs/long_context.txt",
+        "dataset_name": null,
+        "dataset_config": null,
+        "dataset_split": null,
+        "corpus_char_count": 22058,
+        "tokenized_corpus_length": 5446,
+        "window_count": 1,
+        "window_length": 256,
+        "window_stride": 128,
+        "ppl_batch_size": 1,
+        "scored_token_count": 255,
+        "evaluated_token_count": 256,
+        "avg_nll": 1.6328329647288602,
+        "perplexity": 5.1183543160052585,
+        "eval_time_s": 0.21469382499890344,
+        "tokens_per_second": 1187.7379333164447,
+        "prebuild_patterns": false,
+        "prebuild_info": null,
+        "benchmark_mode_info": null,
+        "backend_actual": "dense_hf",
+        "avg_keep_ratio": null,
+        "avg_sparsity": null,
+        "backend_requested": "dense_hf",
+        "pattern": "dense_hf",
+        "repeat_idx": 0
+      }
+    ]
+  },
+  "trials": [
+    {
+      "trial_idx": 0,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.0,
+      "trial_label": "0.0 sparsity in last 100% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "sparse_llm/qwen3/sparse_architecture_search/inputs/long_context.txt",
+        "dataset_name": null,
+        "dataset_config": null,
+        "dataset_split": null,
+        "corpus_char_count": 22058,
+        "tokenized_corpus_length": 5446,
+        "window_count": 1,
+        "window_length": 256,
+        "window_stride": 128,
+        "ppl_batch_size": 1,
+        "scored_token_count": 255,
+        "evaluated_token_count": 256,
+        "avg_nll": 1.7297982010186888,
+        "perplexity": 5.639515745059637,
+        "eval_time_s": 0.19755066000107036,
+        "tokens_per_second": 1290.8081400417411,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 36,
+          "sequence_lengths": [
+            256
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7941176470588235,
+        "avg_sparsity": 0.20588235294117652,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "sparse_llm/qwen3/sparse_architecture_search/inputs/long_context.txt",
+            "dataset_name": null,
+            "dataset_config": null,
+            "dataset_split": null,
+            "corpus_char_count": 22058,
+            "tokenized_corpus_length": 5446,
+            "window_count": 1,
+            "window_length": 256,
+            "window_stride": 128,
+            "ppl_batch_size": 1,
+            "scored_token_count": 255,
+            "evaluated_token_count": 256,
+            "avg_nll": 1.7297982010186888,
+            "perplexity": 5.639515745059637,
+            "eval_time_s": 0.19755066000107036,
+            "tokens_per_second": 1290.8081400417411,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 36,
+              "sequence_lengths": [
+                256
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7941176470588235,
+            "avg_sparsity": 0.20588235294117652,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6), (16, 1, 2, 6)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9075875566956383,
+      "speedup": 1.0867785761775748
+    }
+  ],
+  "pareto_front_indices": [
+    0
+  ],
+  "plot_path": "SparseAttentionInfer/sparse_llm/qwen3/outputs/plots/phase1_search_test_plot.png"
+}

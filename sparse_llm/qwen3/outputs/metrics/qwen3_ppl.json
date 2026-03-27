@@ -1,0 +1,71 @@
+{
+  "dense": {
+    "runtime_name": "dense",
+    "benchmark_type": "perplexity",
+    "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "corpus_source": "long_context.txt",
+    "corpus_char_count": 22058,
+    "tokenized_corpus_length": 5446,
+    "window_count": 10,
+    "window_length": 1024,
+    "window_stride": 512,
+    "ppl_batch_size": 1,
+    "scored_token_count": 5445,
+    "evaluated_token_count": 10054,
+    "avg_nll": 0.8888171039227503,
+    "perplexity": 2.43225084897543,
+    "eval_time_s": 1.2295815640009096,
+    "tokens_per_second": 4428.335752109546,
+    "prebuild_patterns": false,
+    "prebuild_info": null,
+    "benchmark_mode_info": null,
+    "backend_actual": "dense_hf",
+    "avg_keep_ratio": null,
+    "avg_sparsity": null,
+    "backend_requested": "dense_hf",
+    "pattern": "dense_hf"
+  },
+  "sparse": {
+    "runtime_name": "sparse",
+    "benchmark_type": "perplexity",
+    "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "corpus_source": "long_context.txt",
+    "corpus_char_count": 22058,
+    "tokenized_corpus_length": 5446,
+    "window_count": 10,
+    "window_length": 1024,
+    "window_stride": 512,
+    "ppl_batch_size": 1,
+    "scored_token_count": 5445,
+    "evaluated_token_count": 10054,
+    "avg_nll": 1.5192257715650825,
+    "perplexity": 4.568686618395363,
+    "eval_time_s": 0.9055466099998739,
+    "tokens_per_second": 6012.942834605453,
+    "prebuild_patterns": true,
+    "prebuild_info": {
+      "enabled": true,
+      "patterns_built": 72,
+      "sequence_lengths": [
+        838,
+        1024
+      ],
+      "layer_count": 36
+    },
+    "benchmark_mode_info": {
+      "fast_benchmark": false,
+      "configured_layers": 36
+    },
+    "backend_actual": "triton_universal",
+    "avg_keep_ratio": 0.3646447657439652,
+    "avg_sparsity": 0.6353552342560347,
+    "backend_requested": "triton_universal",
+    "pattern": "BigBirdKeepRatio(keep_ratio=0.3000, layout=(11, 1, 2, 9))"
+  }
+}

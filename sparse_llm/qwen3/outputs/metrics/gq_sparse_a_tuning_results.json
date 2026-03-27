@@ -1,0 +1,5468 @@
+{
+  "search_type": "fixed_eval",
+  "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+  "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+  "auto_config_path": "SparseAttentionInfer/sparse_llm/qwen3/sparse_architecture_search/user_config.py",
+  "num_layers": 36,
+  "num_groups": 8,
+  "num_heads": 32,
+  "sampling_grid": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "tail_sampling_grid": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "prefix_dense_layers": 0,
+  "layer_share_span": 36,
+  "num_samples_requested": 20,
+  "fixed_layer_head_sparsities": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "fixed_layer_group_sparsities": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "dense_repeats": 1,
+  "sparse_repeats": 1,
+  "baseline": {
+    "runtime_name": "dense",
+    "benchmark_type": "perplexity",
+    "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+    "dataset_name": "wikitext",
+    "dataset_config": "wikitext-2-raw-v1",
+    "dataset_split": "test",
+    "corpus_char_count": 1291402,
+    "tokenized_corpus_length": 298938,
+    "window_count": 583,
+    "window_length": 1024,
+    "window_stride": 512,
+    "ppl_batch_size": 1,
+    "scored_token_count": 298937,
+    "evaluated_token_count": 596922,
+    "avg_nll": 2.248429010180598,
+    "perplexity": 9.472842401730613,
+    "eval_time_s": 65.55006185900129,
+    "tokens_per_second": 4560.438106725451,
+    "prebuild_patterns": false,
+    "prebuild_info": null,
+    "benchmark_mode_info": null,
+    "backend_actual": "dense_hf",
+    "avg_keep_ratio": null,
+    "avg_sparsity": null,
+    "backend_requested": "dense_hf",
+    "pattern": "dense_hf",
+    "repeat_idx": 0,
+    "repeat_count": 1,
+    "raw_runs": [
+      {
+        "runtime_name": "dense",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.248429010180598,
+        "perplexity": 9.472842401730613,
+        "eval_time_s": 65.55006185900129,
+        "tokens_per_second": 4560.438106725451,
+        "prebuild_patterns": false,
+        "prebuild_info": null,
+        "benchmark_mode_info": null,
+        "backend_actual": "dense_hf",
+        "avg_keep_ratio": null,
+        "avg_sparsity": null,
+        "backend_requested": "dense_hf",
+        "pattern": "dense_hf",
+        "repeat_idx": 0
+      }
+    ]
+  },
+  "trials": [
+    {
+      "trial_idx": 0,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.06666666666666654,
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.3134812265482503,
+        "perplexity": 10.109557126145893,
+        "eval_time_s": 43.760004519004724,
+        "tokens_per_second": 6831.283572426812,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.3134812265482503,
+            "perplexity": 10.109557126145893,
+            "eval_time_s": 43.760004519004724,
+            "tokens_per_second": 6831.283572426812,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9370185343956786,
+      "speedup": 1.4979445861467693
+    },
+    {
+      "trial_idx": 1,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.033333333333333326,
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.303956248348151,
+        "perplexity": 10.01372095817399,
+        "eval_time_s": 43.09993191000103,
+        "tokens_per_second": 6935.904228902826,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.303956248348151,
+            "perplexity": 10.01372095817399,
+            "eval_time_s": 43.09993191000103,
+            "tokens_per_second": 6935.904228902826,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9459862563873553,
+      "speedup": 1.52088550849406
+    },
+    {
+      "trial_idx": 2,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.016666666666666673,
+      "trial_label": "0.2 sparsity in last 10% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.299808430723613,
+        "perplexity": 9.972271890907814,
+        "eval_time_s": 43.06464581700129,
+        "tokens_per_second": 6941.587335242499,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.299808430723613,
+            "perplexity": 9.972271890907814,
+            "eval_time_s": 43.06464581700129,
+            "tokens_per_second": 6941.587335242499,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9499181836756222,
+      "speedup": 1.5221316840163837
+    },
+    {
+      "trial_idx": 3,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.0,
+      "trial_label": "0.2 sparsity in last 10% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.2879944323381616,
+        "perplexity": 9.855152672216002,
+        "eval_time_s": 43.1992283590007,
+        "tokens_per_second": 6919.961567732853,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.2879944323381616,
+            "perplexity": 9.855152672216002,
+            "eval_time_s": 43.1992283590007,
+            "tokens_per_second": 6919.961567732853,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9612070676933081,
+      "speedup": 1.517389646737607
+    },
+    {
+      "trial_idx": 4,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.0,
+      "trial_label": "0.0 sparsity in last 10% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.2879944323381616,
+        "perplexity": 9.855152672216002,
+        "eval_time_s": 43.398978171993804,
+        "tokens_per_second": 6888.111485373861,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.2879944323381616,
+            "perplexity": 9.855152672216002,
+            "eval_time_s": 43.398978171993804,
+            "tokens_per_second": 6888.111485373861,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.9612070676933081,
+      "speedup": 1.5104056505482888
+    },
+    {
+      "trial_idx": 5,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.25,
+      "trial_label": "0.5 sparsity in last 50% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.418302356701327,
+        "perplexity": 11.226784053254383,
+        "eval_time_s": 43.262869806996605,
+        "tokens_per_second": 6909.782021710797,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7726817448378621,
+        "avg_sparsity": 0.22731825516213294,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.418302356701327,
+            "perplexity": 11.226784053254383,
+            "eval_time_s": 43.262869806996605,
+            "tokens_per_second": 6909.782021710797,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7726817448378621,
+            "avg_sparsity": 0.22731825516213294,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12), (32, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.8437716764476874,
+      "speedup": 1.515157504609191
+    },
+    {
+      "trial_idx": 6,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.5,
+      "trial_label": "0.5 sparsity in last 100% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.449826186876887,
+        "perplexity": 11.586332687526046,
+        "eval_time_s": 43.418360422998376,
+        "tokens_per_second": 6885.036585620477,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.4576579071110527,
+        "avg_sparsity": 0.5423420928889482,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], layouts=((16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.449826186876887,
+            "perplexity": 11.586332687526046,
+            "eval_time_s": 43.418360422998376,
+            "tokens_per_second": 6885.036585620477,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.4576579071110527,
+            "avg_sparsity": 0.5423420928889482,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], layouts=((16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12), (16, 1, 2, 12)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.8175876403004692,
+      "speedup": 1.5097313952067133
+    },
+    {
+      "trial_idx": 7,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.9000000000000037,
+      "trial_label": "0.5 sparsity in last 100% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 583,
+        "window_length": 1024,
+        "window_stride": 512,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 596922,
+        "avg_nll": 2.8919689909269266,
+        "perplexity": 18.02877316716315,
+        "eval_time_s": 42.261542808999366,
+        "tokens_per_second": 7073.499454363105,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            954,
+            1024
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.12015760412490688,
+        "avg_sparsity": 0.8798423958750828,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9], layouts=((16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 583,
+            "window_length": 1024,
+            "window_stride": 512,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 596922,
+            "avg_nll": 2.8919689909269266,
+            "perplexity": 18.02877316716315,
+            "eval_time_s": 42.261542808999366,
+            "tokens_per_second": 7073.499454363105,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                954,
+                1024
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.12015760412490688,
+            "avg_sparsity": 0.8798423958750828,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9], layouts=((16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0), (16, 1, 2, 0)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.5254291189920816,
+      "speedup": 1.5510570012849307
+    },
+    {
+      "trial_idx": 8,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ],
+        [
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.9000000000000037,
+      "trial_label": "0.5 sparsity in last 100% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 291,
+        "window_length": 2048,
+        "window_stride": 1024,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 595898,
+        "avg_nll": 2.735140304910739,
+        "perplexity": 15.411905650287705,
+        "eval_time_s": 41.171866441996826,
+        "tokens_per_second": 7260.710427620381,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            1978,
+            2048
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.1059940801341158,
+        "avg_sparsity": 0.8940059198658907,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9], layouts=((16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 291,
+            "window_length": 2048,
+            "window_stride": 1024,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 595898,
+            "avg_nll": 2.735140304910739,
+            "perplexity": 15.411905650287705,
+            "eval_time_s": 41.171866441996826,
+            "tokens_per_second": 7260.710427620381,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                1978,
+                2048
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.1059940801341158,
+            "avg_sparsity": 0.8940059198658907,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9], layouts=((16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4), (16, 1, 2, 4)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 0.6146444584258,
+      "speedup": 1.5921080952535538
+    },
+    {
+      "trial_idx": 9,
+      "group_sparsities": null,
+      "layer_group_sparsities": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "prefix_dense_layers": 0,
+      "layer_share_span": 36,
+      "mean_sparsity": 0.0,
+      "trial_label": "0.5 sparsity in last 100% layers",
+      "status": "ok",
+      "metrics": {
+        "runtime_name": "sparse",
+        "benchmark_type": "perplexity",
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "device": "cuda",
+        "dtype": "torch.bfloat16",
+        "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+        "dataset_name": "wikitext",
+        "dataset_config": "wikitext-2-raw-v1",
+        "dataset_split": "test",
+        "corpus_char_count": 1291402,
+        "tokenized_corpus_length": 298938,
+        "window_count": 291,
+        "window_length": 2048,
+        "window_stride": 1024,
+        "ppl_batch_size": 1,
+        "scored_token_count": 298937,
+        "evaluated_token_count": 595898,
+        "avg_nll": 2.245744616582309,
+        "perplexity": 9.447447664214687,
+        "eval_time_s": 43.73609971800033,
+        "tokens_per_second": 6835.01734099457,
+        "prebuild_patterns": true,
+        "prebuild_info": {
+          "enabled": true,
+          "patterns_built": 72,
+          "sequence_lengths": [
+            1978,
+            2048
+          ],
+          "layer_count": 36
+        },
+        "benchmark_mode_info": {
+          "fast_benchmark": false,
+          "configured_layers": 36
+        },
+        "backend_actual": "triton_universal",
+        "avg_keep_ratio": 0.7614889748352673,
+        "avg_sparsity": 0.23851102516473371,
+        "backend_requested": "triton_universal",
+        "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28)))",
+        "repeat_idx": 0,
+        "repeat_count": 1,
+        "raw_runs": [
+          {
+            "runtime_name": "sparse",
+            "benchmark_type": "perplexity",
+            "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "tokenizer_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+            "device": "cuda",
+            "dtype": "torch.bfloat16",
+            "corpus_source": "wikitext/wikitext-2-raw-v1:test",
+            "dataset_name": "wikitext",
+            "dataset_config": "wikitext-2-raw-v1",
+            "dataset_split": "test",
+            "corpus_char_count": 1291402,
+            "tokenized_corpus_length": 298938,
+            "window_count": 291,
+            "window_length": 2048,
+            "window_stride": 1024,
+            "ppl_batch_size": 1,
+            "scored_token_count": 298937,
+            "evaluated_token_count": 595898,
+            "avg_nll": 2.245744616582309,
+            "perplexity": 9.447447664214687,
+            "eval_time_s": 43.73609971800033,
+            "tokens_per_second": 6835.01734099457,
+            "prebuild_patterns": true,
+            "prebuild_info": {
+              "enabled": true,
+              "patterns_built": 72,
+              "sequence_lengths": [
+                1978,
+                2048
+              ],
+              "layer_count": 36
+            },
+            "benchmark_mode_info": {
+              "fast_benchmark": false,
+              "configured_layers": 36
+            },
+            "backend_actual": "triton_universal",
+            "avg_keep_ratio": 0.7614889748352673,
+            "avg_sparsity": 0.23851102516473371,
+            "backend_requested": "triton_universal",
+            "pattern": "BigBirdGroupSparsity(group_sparsities=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], layouts=((32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28), (32, 1, 2, 28)))",
+            "repeat_idx": 0
+          }
+        ]
+      },
+      "baseline_over_ppl": 1.002687999808892,
+      "speedup": 1.4987633163828518
+    }
+  ],
+  "pareto_front_indices": [
+    8,
+    2,
+    3,
+    9
+  ],
+  "plot_path": "gq_sparse_a_tuning_results_plot.png"
+}
